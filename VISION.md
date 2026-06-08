@@ -44,3 +44,6 @@ requests, API calls, and any data storage explicit and user-controlled.
 - Background location tracking or camera data upload
 - Broad scaffolding without README and verification notes
 - Private location data or signing material
+
+This list is a roadmap guardrail, not a permanent rule.
+Strong user demand and strong technical rationale can change it.
