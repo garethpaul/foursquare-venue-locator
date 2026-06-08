@@ -35,6 +35,11 @@ Contribution rules:
 
 ## Security And Privacy
 
+Canonical security policy and reporting:
+
+- [`SECURITY.md`](SECURITY.md)
+
+
 Location and AR camera surfaces are sensitive. Future code must make permission
 requests, API calls, and any data storage explicit and user-controlled.
 
