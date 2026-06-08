@@ -5,7 +5,7 @@
 
 ## Overview
 
-`garethpaul/foursquare-venue-locator` is a public sample, documentation, or utility project. ARKit + CoreLocation + FoursquareAPI
+`garethpaul/foursquare-venue-locator` is a documentation-only placeholder for a future ARKit, CoreLocation, and Foursquare API venue-location sample.
 
 This README is based on the checked-in source, manifests, scripts, and repository metadata on the `master` branch. The project language mix found during review was: no dominant source language detected.
 
@@ -13,19 +13,22 @@ This README is based on the checked-in source, manifests, scripts, and repositor
 
 - `SECURITY.md` - security reporting and disclosure guidance
 - `VISION.md` - project direction and maintenance guardrails
+- `docs/plans/2026-06-08-foursquare-venue-locator-baseline.md` - current baseline plan and verification record
+- `scripts/check-baseline.sh` - static validation for the checked-in documentation baseline
 
 Additional scan context:
 
 - Source directories: no top-level source directories detected
 - Dependency and build manifests: none detected
-- Entry points or build surfaces: none detected
-- Test-looking files: no obvious test files detected
+- Entry points or build surfaces: `make check`
+- Test-looking files: `scripts/check-baseline.sh`
 
 ## Getting Started
 
 ### Prerequisites
 
 - Git
+- POSIX shell and `make` for repository validation
 
 ### Setup
 
@@ -34,21 +37,26 @@ git clone https://github.com/garethpaul/foursquare-venue-locator.git
 cd foursquare-venue-locator
 ```
 
-The setup commands above are derived from repository files. Legacy mobile, Python, or JavaScript samples may require older SDKs or package versions than a modern workstation uses by default.
+The setup commands above are derived from repository files. Future app work will likely require a physical-device iOS toolchain because ARKit and CoreLocation behavior cannot be fully validated in a static repository scan.
 
 ## Running or Using the Project
 
-- No single runtime entry point was identified. Start by reading the source files and manifests listed above.
+- No app runtime is checked in yet. Start with the repository baseline:
+
+```bash
+make check
+```
 
 ## Testing and Verification
 
-- No dedicated automated test command was identified from the checked-in files. Verify changes by running the relevant build or manually exercising the sample.
+- `make check` validates the current documentation, privacy, and credential guardrails.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
 ## Configuration and Secrets
 
-- No required secret or credential file was identified in the repository scan. If you add integrations later, keep secrets out of git.
+- No required secret or credential file is checked in.
+- Future Foursquare settings should use local-only names such as `FOURSQUARE_CLIENT_ID` and `FOURSQUARE_CLIENT_SECRET`; do not commit real values, generated config, or API query strings that include credentials.
 
 ## Security and Privacy Notes
 

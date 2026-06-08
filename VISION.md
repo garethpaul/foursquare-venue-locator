@@ -4,11 +4,11 @@ This document explains the current state and direction of the project.
 Project overview and developer docs: [`README.md`](README.md)
 
 Foursquare Venue Locator is currently a sparse public repository reserved for an
-ARKit, CoreLocation, and Foursquare API venue-location experiment.
+ARKit, CoreLocation, and Foursquare API venue-location experiment. The README now exists, and `scripts/check-baseline.sh` protects the current documentation and credential-safety baseline.
 
-The only project context beyond security policy is the GitHub description:
-"ARKit + CoreLocation + FoursquareAPI." There is no checked-in implementation
-or README yet.
+The only product context beyond the docs is the GitHub description:
+"ARKit + CoreLocation + FoursquareAPI." There is no checked-in implementation,
+app project, or dependency manifest yet.
 
 The goal is to keep the repository ready for a focused, credential-safe
 location sample rather than accumulate unclear scaffolding.
@@ -19,7 +19,8 @@ Priority:
 
 - Establish project direction before adding code
 - Keep Foursquare credentials and location data out of git
-- Document ARKit, CoreLocation, and device requirements as soon as code exists
+- Keep `make check` passing as the repository baseline evolves
+- Document ARKit, CoreLocation, and physical-device requirements as soon as code exists
 - Prefer a small verifiable prototype over broad app scaffolding
 
 Next priorities:

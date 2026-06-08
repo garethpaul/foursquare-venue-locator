@@ -1,0 +1,9 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+*.xcconfig
+DerivedData/
+xcuserdata/
+mapbox_access_token
+foursquare_credentials.*
