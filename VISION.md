@@ -38,7 +38,7 @@ Contribution rules:
 Location and AR camera surfaces are sensitive. Future code must make permission
 requests, API calls, and any data storage explicit and user-controlled.
 
-## What We Will Not Merge For Now
+## What We Will Not Merge (For Now)
 
 - Hardcoded Foursquare credentials
 - Background location tracking or camera data upload
