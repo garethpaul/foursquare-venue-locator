@@ -1,5 +1,8 @@
 ## Foursquare Venue Locator Vision
 
+This document explains the current state and direction of the project.
+Project overview and developer docs: [`README.md`](README.md)
+
 Foursquare Venue Locator is currently a sparse public repository reserved for an
 ARKit, CoreLocation, and Foursquare API venue-location experiment.
 
