@@ -6,3 +6,5 @@
 - Documented that future Foursquare credentials and Apple local build settings must stay out of git.
 - Added local artifact and credential ignore rules for future iOS/location work.
 - Documented future iOS location and camera purpose-string requirements.
+- Added a docs-only implementation boundary so app source or project files must
+  update verification and privacy guidance when they land.

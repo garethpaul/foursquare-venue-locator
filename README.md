@@ -47,6 +47,9 @@ The setup commands above are derived from repository files. Future app work will
 make check
 ```
 
+- The docs-only baseline must be updated before app source, Xcode projects, or
+  dependency manifests are added.
+
 ## Testing and Verification
 
 - `make check` validates the current documentation, privacy, and credential guardrails.
@@ -58,6 +61,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - No required secret or credential file is checked in.
 - Future Foursquare settings should use local-only names such as `FOURSQUARE_CLIENT_ID` and `FOURSQUARE_CLIENT_SECRET`; do not commit real values, generated config, or API query strings that include credentials.
 - Future iOS app targets should include clear `NSLocationWhenInUseUsageDescription` and `NSCameraUsageDescription` purpose strings before any ARKit, CoreLocation, or camera code is added.
+- Future implementation changes should add device verification notes and
+  dependency manifests in the same change that introduces app source.
 
 ## Security and Privacy Notes
 
@@ -71,6 +76,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - See `VISION.md` for project direction and contribution guardrails.
 - See `docs/plans/2026-06-09-foursquare-venue-ios-privacy-keys.md` for the
   future iOS privacy-key baseline.
+- See `docs/plans/2026-06-09-foursquare-venue-implementation-boundary.md` for
+  the docs-only implementation boundary.
 
 ## Contributing
 

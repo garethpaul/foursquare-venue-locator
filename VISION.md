@@ -10,6 +10,10 @@ The only product context beyond the docs is the GitHub description:
 "ARKit + CoreLocation + FoursquareAPI." There is no checked-in implementation,
 app project, or dependency manifest yet.
 
+No app source, Xcode project, dependency manifest, or executable runtime is
+checked in yet. When implementation lands, it should update the baseline,
+device-verification notes, and privacy/security guidance in the same change.
+
 The goal is to keep the repository ready for a focused, credential-safe
 location sample rather than accumulate unclear scaffolding.
 
@@ -22,6 +26,8 @@ Priority:
 - Keep `make check` passing as the repository baseline evolves
 - Document ARKit, CoreLocation, and physical-device requirements as soon as code exists
 - Require camera and location purpose strings before future iOS app code lands
+- Require baseline updates before future app source, project files, or
+  dependency manifests land
 - Prefer a small verifiable prototype over broad app scaffolding
 
 Next priorities:
