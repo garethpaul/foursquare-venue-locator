@@ -32,6 +32,8 @@ Priority:
   dependency manifests land
 - Keep Apple signing artifacts, provisioning profiles, archives, and result
   bundles out of git
+- Keep local location traces, simulator routes, and raw coordinate fixtures out
+  of git until sanitized fixtures are explicitly documented
 - Prefer a small verifiable prototype over broad app scaffolding
 
 Next priorities:
@@ -45,11 +47,14 @@ Next priorities:
 - Keep `SECURITY.md` aligned with any credential or location workflow
 - Keep signing artifacts and local Apple export outputs ignored as the app
   target takes shape
+- Keep local location traces ignored unless a future sample needs documented,
+  synthetic route fixtures
 
 Contribution rules:
 
 - One PR = one focused setup, API, AR, or documentation topic.
 - Do not commit real API credentials, signing files, or location traces.
+- Do not commit raw simulator routes or local coordinate exports.
 - Keep generated project files minimal until a working sample exists.
 - Document physical-device requirements for AR/location behavior.
 

@@ -13,3 +13,8 @@ DerivedData/
 xcuserdata/
 mapbox_access_token
 foursquare_credentials.*
+*.gpx
+*.geojson
+*.kml
+location-traces/
+LocationTraces/

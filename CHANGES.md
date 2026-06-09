@@ -4,6 +4,8 @@
 
 - Added static guardrails and ignore rules for future Apple signing, archive,
   IPA export, and Xcode result artifacts.
+- Added static guardrails and ignore rules for local location traces, simulator
+  routes, and raw coordinate fixtures.
 
 ## 2026-06-08
 
