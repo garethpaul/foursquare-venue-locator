@@ -21,6 +21,7 @@ Priority:
 - Keep Foursquare credentials and location data out of git
 - Keep `make check` passing as the repository baseline evolves
 - Document ARKit, CoreLocation, and physical-device requirements as soon as code exists
+- Require camera and location purpose strings before future iOS app code lands
 - Prefer a small verifiable prototype over broad app scaffolding
 
 Next priorities:
@@ -28,6 +29,8 @@ Next priorities:
 - Add README setup and privacy notes before the first implementation
 - Define the API configuration and location-permission model
 - Add manual device verification steps for AR and location behavior
+- Keep `NSLocationWhenInUseUsageDescription` and `NSCameraUsageDescription`
+  guidance aligned with future app targets
 - Keep `SECURITY.md` aligned with any credential or location workflow
 
 Contribution rules:

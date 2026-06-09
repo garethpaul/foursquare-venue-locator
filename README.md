@@ -57,15 +57,20 @@ When the required SDK or runtime is unavailable, use static checks and source re
 
 - No required secret or credential file is checked in.
 - Future Foursquare settings should use local-only names such as `FOURSQUARE_CLIENT_ID` and `FOURSQUARE_CLIENT_SECRET`; do not commit real values, generated config, or API query strings that include credentials.
+- Future iOS app targets should include clear `NSLocationWhenInUseUsageDescription` and `NSCameraUsageDescription` purpose strings before any ARKit, CoreLocation, or camera code is added.
 
 ## Security and Privacy Notes
 
 - The scan did not identify production authentication, payment, or secret-management code. Treat future additions in those areas as security-sensitive.
+- Treat location permission prompts, camera access, venue search URLs, and any
+  saved location traces as security-sensitive surfaces.
 
 ## Maintenance Notes
 
 - See `SECURITY.md` for vulnerability reporting and safe research guidance.
 - See `VISION.md` for project direction and contribution guardrails.
+- See `docs/plans/2026-06-09-foursquare-venue-ios-privacy-keys.md` for the
+  future iOS privacy-key baseline.
 
 ## Contributing
 
