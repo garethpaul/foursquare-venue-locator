@@ -8,6 +8,7 @@ IMPLEMENTATION_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-implementa
 CONFIG_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-local-config-template.md"
 SIGNING_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-signing-artifact-guard.md"
 LOCATION_TRACE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-location-trace-guard.md"
+MAKE_GATES_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-make-gate-aliases.md"
 
 require_file() {
   path=$1
@@ -30,10 +31,18 @@ for path in \
   "docs/plans/2026-06-09-foursquare-venue-ios-privacy-keys.md" \
   "docs/plans/2026-06-09-foursquare-venue-location-trace-guard.md" \
   "docs/plans/2026-06-09-foursquare-venue-local-config-template.md" \
+  "docs/plans/2026-06-09-foursquare-venue-make-gate-aliases.md" \
   "docs/plans/2026-06-09-foursquare-venue-signing-artifact-guard.md" \
   "docs/plans/2026-06-08-foursquare-venue-locator-baseline.md"; do
   require_file "$path"
 done
+
+makefile="$ROOT_DIR/Makefile"
+if ! grep -Eq '^\.PHONY: .*build.*check.*lint.*test|^\.PHONY: .*build.*lint.*test.*check' "$makefile" ||
+  ! grep -Fq "lint test build: check" "$makefile"; then
+  printf '%s\n' "Makefile must expose lint, test, build, and check gate targets." >&2
+  exit 1
+fi
 
 if git -C "$ROOT_DIR" ls-files | grep -Eq '(^|/)\.DS_Store$|\.xcuser(state|datad)/|^DerivedData/'; then
   printf '%s\n' "Machine-local Apple and Finder artifacts must not be tracked." >&2
@@ -81,7 +90,10 @@ for pattern in "*.gpx" "*.geojson" "*.kml" "location-traces/" "LocationTraces/";
   fi
 done
 
-if ! grep -Fq "make check" "$ROOT_DIR/README.md" ||
+if ! grep -Fq "make lint" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "make test" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "make build" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "make check" "$ROOT_DIR/README.md" ||
   ! grep -Fq "FOURSQUARE_CLIENT_ID" "$ROOT_DIR/README.md" ||
   ! grep -Fq "FOURSQUARE_CLIENT_SECRET" "$ROOT_DIR/README.md" ||
   ! grep -Fq ".env.example" "$ROOT_DIR/README.md" ||
@@ -97,6 +109,9 @@ if ! grep -Fq "make check" "$ROOT_DIR/README.md" ||
 fi
 
 if ! grep -Fq "scripts/check-baseline.sh" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "make lint" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "make test" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "make build" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "README now exists" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "Require camera and location purpose strings" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "non-secret .env.example" "$ROOT_DIR/VISION.md" ||
@@ -150,6 +165,11 @@ fi
 
 if ! grep -Fq "status: completed" "$LOCATION_TRACE_PLAN"; then
   printf '%s\n' "Location trace guard plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$MAKE_GATES_PLAN"; then
+  printf '%s\n' "Make gate alias plan must be marked completed." >&2
   exit 1
 fi
 

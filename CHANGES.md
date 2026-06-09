@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Added `make lint`, `make test`, and `make build` aliases so local verification
+  has the expected pre-push gate targets in addition to `make check`.
 - Added static guardrails and ignore rules for future Apple signing, archive,
   IPA export, and Xcode result artifacts.
 - Added static guardrails and ignore rules for local location traces, simulator

@@ -25,7 +25,8 @@ Priority:
 - Keep Foursquare credentials and location data out of git
 - Keep a non-secret .env.example available for future local Foursquare
   configuration
-- Keep `make check` passing as the repository baseline evolves
+- Keep `make lint`, `make test`, `make build`, and `make check` passing as the
+  repository baseline evolves
 - Document ARKit, CoreLocation, and physical-device requirements as soon as code exists
 - Require camera and location purpose strings before future iOS app code lands
 - Require baseline updates before future app source, project files, or
@@ -34,6 +35,7 @@ Priority:
   bundles out of git
 - Keep local location traces, simulator routes, and raw coordinate fixtures out
   of git until sanitized fixtures are explicitly documented
+- Keep lint, test, build, and check targets available before app source exists
 - Prefer a small verifiable prototype over broad app scaffolding
 
 Next priorities:

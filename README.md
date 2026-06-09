@@ -45,6 +45,9 @@ The setup commands above are derived from repository files. Future app work will
 - No app runtime is checked in yet. Start with the repository baseline:
 
 ```bash
+make lint
+make test
+make build
 make check
 ```
 
@@ -53,7 +56,10 @@ make check
 
 ## Testing and Verification
 
-- `make check` validates the current documentation, privacy, and credential guardrails.
+- `make lint`, `make test`, `make build`, and `make check` validate the current
+  documentation, privacy, and credential guardrails. The `lint`, `test`, and
+  `build` targets currently delegate to the static baseline so the repository
+  has a consistent local gate before app code exists.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -98,6 +104,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   Apple signing and export artifact exclusions.
 - See `docs/plans/2026-06-09-foursquare-venue-location-trace-guard.md` for
   location trace and simulator route exclusions.
+- See `docs/plans/2026-06-09-foursquare-venue-make-gate-aliases.md` for local
+  verification target guardrails.
 
 ## Contributing
 
