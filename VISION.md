@@ -25,6 +25,8 @@ Priority:
 - Keep Foursquare credentials and location data out of git
 - Keep a non-secret .env.example available for future local Foursquare
   configuration
+- Keep `.envrc` out of git because direnv-style local files can export real
+  credentials
 - Keep `make lint`, `make test`, `make build`, and `make check` passing as the
   repository baseline evolves
 - Document ARKit, CoreLocation, and physical-device requirements as soon as code exists
@@ -44,6 +46,7 @@ Next priorities:
 - Add README setup and privacy notes before the first implementation
 - Define the API configuration and location-permission model
 - Keep local configuration examples limited to placeholder credentials
+- Keep direnv and other local credential helper files ignored
 - Add manual device verification steps for AR and location behavior
 - Keep `NSLocationWhenInUseUsageDescription` and `NSCameraUsageDescription`
   guidance aligned with future app targets

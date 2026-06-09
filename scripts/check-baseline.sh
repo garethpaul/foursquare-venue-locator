@@ -10,6 +10,7 @@ SIGNING_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-signing-artifact-
 LOCATION_TRACE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-location-trace-guard.md"
 MAKE_GATES_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-make-gate-aliases.md"
 XCODE_USER_STATE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-xcode-user-state-guard.md"
+LOCAL_ENVRC_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-envrc-guard.md"
 
 require_file() {
   path=$1
@@ -29,6 +30,7 @@ for path in \
   "VISION.md" \
   "docs/readme-overview.svg" \
   "docs/plans/2026-06-09-foursquare-venue-implementation-boundary.md" \
+  "docs/plans/2026-06-09-foursquare-venue-envrc-guard.md" \
   "docs/plans/2026-06-09-foursquare-venue-ios-privacy-keys.md" \
   "docs/plans/2026-06-09-foursquare-venue-location-trace-guard.md" \
   "docs/plans/2026-06-09-foursquare-venue-local-config-template.md" \
@@ -48,6 +50,11 @@ fi
 
 if git -C "$ROOT_DIR" ls-files | grep -Eq '(^|/)\.DS_Store$|(^|/)xcuserdata/|\.xcuserstate$|\.xcuserdatad/|^DerivedData/'; then
   printf '%s\n' "Machine-local Apple and Finder artifacts must not be tracked." >&2
+  exit 1
+fi
+
+if git -C "$ROOT_DIR" ls-files | grep -Eq '(^|/)\.envrc$'; then
+  printf '%s\n' "Local direnv credential files must not be tracked." >&2
   exit 1
 fi
 
@@ -99,6 +106,11 @@ for pattern in "*.xcuserstate" "*.xcuserdatad" "xcuserdata/"; do
   fi
 done
 
+if ! grep -Fxq ".envrc" "$ROOT_DIR/.gitignore"; then
+  printf '%s\n' ".gitignore must exclude local direnv credential files." >&2
+  exit 1
+fi
+
 if ! grep -Fq "make lint" "$ROOT_DIR/README.md" ||
   ! grep -Fq "make test" "$ROOT_DIR/README.md" ||
   ! grep -Fq "make build" "$ROOT_DIR/README.md" ||
@@ -107,6 +119,7 @@ if ! grep -Fq "make lint" "$ROOT_DIR/README.md" ||
   ! grep -Fq "FOURSQUARE_CLIENT_SECRET" "$ROOT_DIR/README.md" ||
   ! grep -Fq ".env.example" "$ROOT_DIR/README.md" ||
   ! grep -Fq "placeholder values" "$ROOT_DIR/README.md" ||
+  ! grep -Fq ".envrc" "$ROOT_DIR/README.md" ||
   ! grep -Fq "NSLocationWhenInUseUsageDescription" "$ROOT_DIR/README.md" ||
   ! grep -Fq "NSCameraUsageDescription" "$ROOT_DIR/README.md" ||
   ! grep -Fq "signing artifacts" "$ROOT_DIR/README.md" ||
@@ -125,6 +138,7 @@ if ! grep -Fq "scripts/check-baseline.sh" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "README now exists" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "Require camera and location purpose strings" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "non-secret .env.example" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq ".envrc" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "signing artifacts" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "Xcode user-state" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "local location traces" "$ROOT_DIR/VISION.md" ||
@@ -137,6 +151,7 @@ fi
 if ! grep -Fq "GitHub's private vulnerability reporting" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq "No primary dependency manifest" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq ".env.example" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq ".envrc" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq "signing artifacts" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq "Xcode user-state" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq "location traces" "$ROOT_DIR/SECURITY.md" ||
@@ -187,6 +202,16 @@ fi
 
 if ! grep -Fq "status: completed" "$XCODE_USER_STATE_PLAN"; then
   printf '%s\n' "Xcode user-state guard plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$LOCAL_ENVRC_PLAN"; then
+  printf '%s\n' "Local envrc guard plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "make check" "$LOCAL_ENVRC_PLAN"; then
+  printf '%s\n' "Local envrc guard plan must record make check verification." >&2
   exit 1
 fi
 

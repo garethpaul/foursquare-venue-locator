@@ -68,6 +68,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - `.env.example` contains placeholder values for future local Foursquare
   configuration. Copy it to `.env` for local experiments and keep real values
   out of git.
+- Local direnv files such as `.envrc` are ignored because they can export real
+  Foursquare credentials or machine-specific settings.
 - Future Foursquare settings should use local-only names such as
   `FOURSQUARE_CLIENT_ID` and `FOURSQUARE_CLIENT_SECRET`; do not commit real
   values, generated config, or API query strings that include credentials.
@@ -89,6 +91,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   saved location traces as security-sensitive surfaces.
 - Treat Apple signing artifacts and export archives as sensitive local files,
   not project documentation or source.
+- Treat `.envrc` as a local credential file when using direnv or similar
+  tooling.
 - Treat Xcode user-state files as local machine artifacts because they can
   include personal workspace paths or device state.
 - Treat local location traces and simulator routes as sensitive test inputs
@@ -104,6 +108,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   the docs-only implementation boundary.
 - See `docs/plans/2026-06-09-foursquare-venue-local-config-template.md` for
   the local configuration template guardrail.
+- See `docs/plans/2026-06-09-foursquare-venue-envrc-guard.md` for the local
+  direnv credential-file guardrail.
 - See `docs/plans/2026-06-09-foursquare-venue-signing-artifact-guard.md` for
   Apple signing and export artifact exclusions.
 - See `docs/plans/2026-06-09-foursquare-venue-location-trace-guard.md` for

@@ -2,6 +2,8 @@
 
 ## 2026-06-09
 
+- Added ignore and baseline coverage for local `.envrc` credential helper
+  files.
 - Added explicit ignore and baseline coverage for Xcode user-state files and
   workspace user data.
 - Added `make lint`, `make test`, and `make build` aliases so local verification

@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+.envrc
 *.xcconfig
 *.cer
 *.mobileprovision

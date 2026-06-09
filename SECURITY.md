@@ -29,6 +29,8 @@ Helpful reports include:
 - No primary dependency manifest was detected in the repository root. If dependencies are added later, include a manifest and prefer reproducible installation instructions.
 - `.env.example` is a placeholder-only template. Real Foursquare credentials
   belong in the ignored local `.env` file and must not be committed.
+- `.envrc` is treated as a local credential helper file and must not be
+  committed.
 - Apple signing artifacts, provisioning profiles, archives, IPA exports, and
   Xcode result bundles are local outputs and must not be committed.
 - Xcode user-state files and workspace user data are local outputs and must not
