@@ -27,6 +27,8 @@ Helpful reports include:
 - This repository appears to be a public sample, documentation, or utility project. The active security scope is the code and documentation on the default branch.
 - The repository scan did not identify production authentication, payment, or secret-management code. Treat the project as public sample code unless future changes add sensitive surfaces.
 - No primary dependency manifest was detected in the repository root. If dependencies are added later, include a manifest and prefer reproducible installation instructions.
+- `.env.example` is a placeholder-only template. Real Foursquare credentials
+  belong in the ignored local `.env` file and must not be committed.
 - Future ARKit, CoreLocation, and camera code should document permission prompts,
   physical-device verification, credential configuration, and whether any
   location or camera data is persisted or transmitted.

@@ -19,7 +19,8 @@ This README is based on the checked-in source, manifests, scripts, and repositor
 Additional scan context:
 
 - Source directories: no top-level source directories detected
-- Dependency and build manifests: none detected
+- Dependency and build manifests: `.env.example` only; no app dependency
+  manifest detected
 - Entry points or build surfaces: `make check`
 - Test-looking files: `scripts/check-baseline.sh`
 
@@ -58,8 +59,12 @@ When the required SDK or runtime is unavailable, use static checks and source re
 
 ## Configuration and Secrets
 
-- No required secret or credential file is checked in.
-- Future Foursquare settings should use local-only names such as `FOURSQUARE_CLIENT_ID` and `FOURSQUARE_CLIENT_SECRET`; do not commit real values, generated config, or API query strings that include credentials.
+- `.env.example` contains placeholder values for future local Foursquare
+  configuration. Copy it to `.env` for local experiments and keep real values
+  out of git.
+- Future Foursquare settings should use local-only names such as
+  `FOURSQUARE_CLIENT_ID` and `FOURSQUARE_CLIENT_SECRET`; do not commit real
+  values, generated config, or API query strings that include credentials.
 - Future iOS app targets should include clear `NSLocationWhenInUseUsageDescription` and `NSCameraUsageDescription` purpose strings before any ARKit, CoreLocation, or camera code is added.
 - Future implementation changes should add device verification notes and
   dependency manifests in the same change that introduces app source.
@@ -78,6 +83,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   future iOS privacy-key baseline.
 - See `docs/plans/2026-06-09-foursquare-venue-implementation-boundary.md` for
   the docs-only implementation boundary.
+- See `docs/plans/2026-06-09-foursquare-venue-local-config-template.md` for
+  the local configuration template guardrail.
 
 ## Contributing
 
