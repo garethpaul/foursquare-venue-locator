@@ -11,6 +11,8 @@
 *.ipa
 DerivedData/
 xcuserdata/
+*.xcuserstate
+*.xcuserdatad
 mapbox_access_token
 foursquare_credentials.*
 *.gpx

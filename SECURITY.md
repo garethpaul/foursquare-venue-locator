@@ -31,6 +31,8 @@ Helpful reports include:
   belong in the ignored local `.env` file and must not be committed.
 - Apple signing artifacts, provisioning profiles, archives, IPA exports, and
   Xcode result bundles are local outputs and must not be committed.
+- Xcode user-state files and workspace user data are local outputs and must not
+  be committed.
 - Local GPX, GeoJSON, KML, and location traces can expose precise coordinates
   and movement patterns; keep them out of git unless a future sanitized fixture
   policy is added.

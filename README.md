@@ -76,6 +76,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   dependency manifests in the same change that introduces app source.
 - Future Apple signing artifacts, provisioning profiles, archives, IPA exports,
   and Xcode result bundles are ignored and must stay out of git.
+- Future Xcode user-state files and workspace user data are ignored and must
+  stay out of git.
 - Future GPX, GeoJSON, KML, and local location-trace folders are treated as
   local test data unless the baseline is deliberately updated for sanitized
   fixtures.
@@ -87,6 +89,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   saved location traces as security-sensitive surfaces.
 - Treat Apple signing artifacts and export archives as sensitive local files,
   not project documentation or source.
+- Treat Xcode user-state files as local machine artifacts because they can
+  include personal workspace paths or device state.
 - Treat local location traces and simulator routes as sensitive test inputs
   because they can reveal precise movement patterns.
 
@@ -106,6 +110,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   location trace and simulator route exclusions.
 - See `docs/plans/2026-06-09-foursquare-venue-make-gate-aliases.md` for local
   verification target guardrails.
+- See `docs/plans/2026-06-09-foursquare-venue-xcode-user-state-guard.md` for
+  Xcode user-state artifact exclusions.
 
 ## Contributing
 

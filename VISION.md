@@ -33,6 +33,7 @@ Priority:
   dependency manifests land
 - Keep Apple signing artifacts, provisioning profiles, archives, and result
   bundles out of git
+- Keep Xcode user-state artifacts out of git
 - Keep local location traces, simulator routes, and raw coordinate fixtures out
   of git until sanitized fixtures are explicitly documented
 - Keep lint, test, build, and check targets available before app source exists
@@ -49,6 +50,7 @@ Next priorities:
 - Keep `SECURITY.md` aligned with any credential or location workflow
 - Keep signing artifacts and local Apple export outputs ignored as the app
   target takes shape
+- Keep Xcode user-state artifacts ignored as the app target takes shape
 - Keep local location traces ignored unless a future sample needs documented,
   synthetic route fixtures
 

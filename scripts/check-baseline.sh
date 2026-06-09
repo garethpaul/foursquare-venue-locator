@@ -9,6 +9,7 @@ CONFIG_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-local-config-templ
 SIGNING_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-signing-artifact-guard.md"
 LOCATION_TRACE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-location-trace-guard.md"
 MAKE_GATES_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-make-gate-aliases.md"
+XCODE_USER_STATE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-xcode-user-state-guard.md"
 
 require_file() {
   path=$1
@@ -33,6 +34,7 @@ for path in \
   "docs/plans/2026-06-09-foursquare-venue-local-config-template.md" \
   "docs/plans/2026-06-09-foursquare-venue-make-gate-aliases.md" \
   "docs/plans/2026-06-09-foursquare-venue-signing-artifact-guard.md" \
+  "docs/plans/2026-06-09-foursquare-venue-xcode-user-state-guard.md" \
   "docs/plans/2026-06-08-foursquare-venue-locator-baseline.md"; do
   require_file "$path"
 done
@@ -44,7 +46,7 @@ if ! grep -Eq '^\.PHONY: .*build.*check.*lint.*test|^\.PHONY: .*build.*lint.*tes
   exit 1
 fi
 
-if git -C "$ROOT_DIR" ls-files | grep -Eq '(^|/)\.DS_Store$|\.xcuser(state|datad)/|^DerivedData/'; then
+if git -C "$ROOT_DIR" ls-files | grep -Eq '(^|/)\.DS_Store$|(^|/)xcuserdata/|\.xcuserstate$|\.xcuserdatad/|^DerivedData/'; then
   printf '%s\n' "Machine-local Apple and Finder artifacts must not be tracked." >&2
   exit 1
 fi
@@ -90,6 +92,13 @@ for pattern in "*.gpx" "*.geojson" "*.kml" "location-traces/" "LocationTraces/";
   fi
 done
 
+for pattern in "*.xcuserstate" "*.xcuserdatad" "xcuserdata/"; do
+  if ! grep -Fxq "$pattern" "$ROOT_DIR/.gitignore"; then
+    printf '%s\n' ".gitignore must exclude local Xcode user-state artifacts: $pattern" >&2
+    exit 1
+  fi
+done
+
 if ! grep -Fq "make lint" "$ROOT_DIR/README.md" ||
   ! grep -Fq "make test" "$ROOT_DIR/README.md" ||
   ! grep -Fq "make build" "$ROOT_DIR/README.md" ||
@@ -101,6 +110,7 @@ if ! grep -Fq "make lint" "$ROOT_DIR/README.md" ||
   ! grep -Fq "NSLocationWhenInUseUsageDescription" "$ROOT_DIR/README.md" ||
   ! grep -Fq "NSCameraUsageDescription" "$ROOT_DIR/README.md" ||
   ! grep -Fq "signing artifacts" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "Xcode user-state" "$ROOT_DIR/README.md" ||
   ! grep -Fq "location traces" "$ROOT_DIR/README.md" ||
   ! grep -Fq "docs-only baseline must be updated before app source" "$ROOT_DIR/README.md" ||
   ! grep -Fq "physical-device" "$ROOT_DIR/README.md"; then
@@ -116,6 +126,7 @@ if ! grep -Fq "scripts/check-baseline.sh" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "Require camera and location purpose strings" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "non-secret .env.example" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "signing artifacts" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "Xcode user-state" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "local location traces" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "No app source, Xcode project" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "location data out of git" "$ROOT_DIR/VISION.md"; then
@@ -127,6 +138,7 @@ if ! grep -Fq "GitHub's private vulnerability reporting" "$ROOT_DIR/SECURITY.md"
   ! grep -Fq "No primary dependency manifest" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq ".env.example" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq "signing artifacts" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "Xcode user-state" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq "location traces" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq "Future ARKit, CoreLocation, and camera code" "$ROOT_DIR/SECURITY.md"; then
   printf '%s\n' "SECURITY must keep reporting and dependency-scope guidance." >&2
@@ -170,6 +182,11 @@ fi
 
 if ! grep -Fq "status: completed" "$MAKE_GATES_PLAN"; then
   printf '%s\n' "Make gate alias plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$XCODE_USER_STATE_PLAN"; then
+  printf '%s\n' "Xcode user-state guard plan must be marked completed." >&2
   exit 1
 fi
 
