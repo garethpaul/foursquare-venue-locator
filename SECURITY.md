@@ -31,6 +31,9 @@ Helpful reports include:
   belong in the ignored local `.env` file and must not be committed.
 - `.envrc` is treated as a local credential helper file and must not be
   committed.
+- `*.xcconfig` files are treated as local Xcode build settings and must not be
+  committed unless a future app baseline documents sanitized checked-in
+  configuration.
 - Apple signing artifacts, provisioning profiles, archives, IPA exports, and
   Xcode result bundles are local outputs and must not be committed.
 - Xcode user-state files and workspace user data are local outputs and must not

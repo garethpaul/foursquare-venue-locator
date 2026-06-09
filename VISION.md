@@ -27,6 +27,8 @@ Priority:
   configuration
 - Keep `.envrc` out of git because direnv-style local files can export real
   credentials
+- Keep `*.xcconfig` out of git because local Xcode build settings can contain
+  credentials, signing choices, or machine paths
 - Keep `make lint`, `make test`, `make build`, and `make check` passing as the
   repository baseline evolves
 - Document ARKit, CoreLocation, and physical-device requirements as soon as code exists
@@ -47,6 +49,8 @@ Next priorities:
 - Define the API configuration and location-permission model
 - Keep local configuration examples limited to placeholder credentials
 - Keep direnv and other local credential helper files ignored
+- Keep local Xcode `*.xcconfig` build-setting files ignored unless a future app
+  baseline documents sanitized checked-in configuration
 - Add manual device verification steps for AR and location behavior
 - Keep `NSLocationWhenInUseUsageDescription` and `NSCameraUsageDescription`
   guidance aligned with future app targets

@@ -2,6 +2,7 @@
 
 ## 2026-06-09
 
+- Added baseline coverage for local `*.xcconfig` Xcode build-setting files.
 - Added ignore and baseline coverage for local `.envrc` credential helper
   files.
 - Added explicit ignore and baseline coverage for Xcode user-state files and
