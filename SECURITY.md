@@ -29,6 +29,8 @@ Helpful reports include:
 - No primary dependency manifest was detected in the repository root. If dependencies are added later, include a manifest and prefer reproducible installation instructions.
 - `.env.example` is a placeholder-only template. Real Foursquare credentials
   belong in the ignored local `.env` file and must not be committed.
+- Apple signing artifacts, provisioning profiles, archives, IPA exports, and
+  Xcode result bundles are local outputs and must not be committed.
 - Future ARKit, CoreLocation, and camera code should document permission prompts,
   physical-device verification, credential configuration, and whether any
   location or camera data is persisted or transmitted.

@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-09
+
+- Added static guardrails and ignore rules for future Apple signing, archive,
+  IPA export, and Xcode result artifacts.
+
 ## 2026-06-08
 
 - Added a reproducible documentation-only baseline check for the current repository state.

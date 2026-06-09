@@ -68,12 +68,16 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Future iOS app targets should include clear `NSLocationWhenInUseUsageDescription` and `NSCameraUsageDescription` purpose strings before any ARKit, CoreLocation, or camera code is added.
 - Future implementation changes should add device verification notes and
   dependency manifests in the same change that introduces app source.
+- Future Apple signing artifacts, provisioning profiles, archives, IPA exports,
+  and Xcode result bundles are ignored and must stay out of git.
 
 ## Security and Privacy Notes
 
 - The scan did not identify production authentication, payment, or secret-management code. Treat future additions in those areas as security-sensitive.
 - Treat location permission prompts, camera access, venue search URLs, and any
   saved location traces as security-sensitive surfaces.
+- Treat Apple signing artifacts and export archives as sensitive local files,
+  not project documentation or source.
 
 ## Maintenance Notes
 
@@ -85,6 +89,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   the docs-only implementation boundary.
 - See `docs/plans/2026-06-09-foursquare-venue-local-config-template.md` for
   the local configuration template guardrail.
+- See `docs/plans/2026-06-09-foursquare-venue-signing-artifact-guard.md` for
+  Apple signing and export artifact exclusions.
 
 ## Contributing
 

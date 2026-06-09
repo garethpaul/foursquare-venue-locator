@@ -30,6 +30,8 @@ Priority:
 - Require camera and location purpose strings before future iOS app code lands
 - Require baseline updates before future app source, project files, or
   dependency manifests land
+- Keep Apple signing artifacts, provisioning profiles, archives, and result
+  bundles out of git
 - Prefer a small verifiable prototype over broad app scaffolding
 
 Next priorities:
@@ -41,6 +43,8 @@ Next priorities:
 - Keep `NSLocationWhenInUseUsageDescription` and `NSCameraUsageDescription`
   guidance aligned with future app targets
 - Keep `SECURITY.md` aligned with any credential or location workflow
+- Keep signing artifacts and local Apple export outputs ignored as the app
+  target takes shape
 
 Contribution rules:
 

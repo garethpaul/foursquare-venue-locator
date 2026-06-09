@@ -3,6 +3,12 @@
 .env.*
 !.env.example
 *.xcconfig
+*.cer
+*.mobileprovision
+*.p12
+*.xcarchive
+*.xcresult
+*.ipa
 DerivedData/
 xcuserdata/
 mapbox_access_token
