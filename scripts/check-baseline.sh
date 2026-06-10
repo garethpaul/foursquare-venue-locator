@@ -12,6 +12,8 @@ MAKE_GATES_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-make-gate-alia
 XCODE_USER_STATE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-xcode-user-state-guard.md"
 LOCAL_ENVRC_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-envrc-guard.md"
 LOCAL_XCCONFIG_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-xcconfig-guard.md"
+CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-boundary-checks.md"
+CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
   path=$1
@@ -22,6 +24,7 @@ require_file() {
 }
 
 for path in \
+  ".github/workflows/check.yml" \
   ".gitignore" \
   ".env.example" \
   "CHANGES.md" \
@@ -39,7 +42,8 @@ for path in \
   "docs/plans/2026-06-09-foursquare-venue-make-gate-aliases.md" \
   "docs/plans/2026-06-09-foursquare-venue-signing-artifact-guard.md" \
   "docs/plans/2026-06-09-foursquare-venue-xcode-user-state-guard.md" \
-  "docs/plans/2026-06-08-foursquare-venue-locator-baseline.md"; do
+  "docs/plans/2026-06-08-foursquare-venue-locator-baseline.md" \
+  "docs/plans/2026-06-10-hosted-boundary-checks.md"; do
   require_file "$path"
 done
 
@@ -237,6 +241,23 @@ fi
 
 if ! grep -Fq "make check" "$LOCAL_XCCONFIG_PLAN"; then
   printf '%s\n' "Local xcconfig guard plan must record make check verification." >&2
+  exit 1
+fi
+
+if ! grep -Fq "workflow_dispatch:" "$CI_WORKFLOW" ||
+  ! grep -Fq "contents: read" "$CI_WORKFLOW" ||
+  ! grep -Fq "cancel-in-progress: true" "$CI_WORKFLOW" ||
+  ! grep -Fq "runs-on: ubuntu-24.04" "$CI_WORKFLOW" ||
+  ! grep -Fq "timeout-minutes: 5" "$CI_WORKFLOW" ||
+  ! grep -Fq "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" "$CI_WORKFLOW" ||
+  ! grep -Fq "run: make check" "$CI_WORKFLOW"; then
+  printf '%s\n' "GitHub Actions must keep the bounded docs-only boundary check contract." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$CI_PLAN" ||
+  ! grep -Fq "make check" "$CI_PLAN"; then
+  printf '%s\n' "Hosted boundary checks plan must be completed and record verification." >&2
   exit 1
 fi
 

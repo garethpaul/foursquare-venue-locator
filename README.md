@@ -60,6 +60,7 @@ make check
   documentation, privacy, and credential guardrails. The `lint`, `test`, and
   `build` targets currently delegate to the static baseline so the repository
   has a consistent local gate before app code exists.
+- GitHub Actions runs the same boundary checks for pushes and pull requests.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -105,6 +106,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
 
 ## Maintenance Notes
 
+- Keep `.github/workflows/check.yml` aligned with the docs-only baseline.
+- See `docs/plans/2026-06-10-hosted-boundary-checks.md` for hosted enforcement.
 - See `SECURITY.md` for vulnerability reporting and safe research guidance.
 - See `VISION.md` for project direction and contribution guardrails.
 - See `docs/plans/2026-06-09-foursquare-venue-ios-privacy-keys.md` for the

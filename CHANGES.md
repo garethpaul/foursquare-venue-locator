@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-10
+
+- Added a pinned, least-privilege GitHub Actions workflow that enforces the
+  docs-only credential, privacy, artifact, and scaffold boundary.
+
 ## 2026-06-09
 
 - Added baseline coverage for local `*.xcconfig` Xcode build-setting files.
