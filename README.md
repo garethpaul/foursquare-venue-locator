@@ -87,6 +87,9 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Future GPX, GeoJSON, KML, and local location-trace folders are treated as
   local test data unless the baseline is deliberately updated for sanitized
   fixtures.
+- Future `camera-captures` and `camera-recordings` directories are local-only
+  outputs. Intentionally sanitized media fixtures require an explicit baseline
+  update and metadata review before they are tracked.
 
 ## Security and Privacy Notes
 
@@ -103,6 +106,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   include personal workspace paths or device state.
 - Treat local location traces and simulator routes as sensitive test inputs
   because they can reveal precise movement patterns.
+- Treat local AR camera captures and recordings as sensitive outputs because
+  they can reveal people, private spaces, and embedded location metadata.
 
 ## Maintenance Notes
 

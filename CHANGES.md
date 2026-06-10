@@ -2,6 +2,8 @@
 
 ## 2026-06-10
 
+- Added ignore and tracked-file guards for future local AR camera captures and
+  recordings that may contain sensitive visual or location metadata.
 - Added a pinned, least-privilege GitHub Actions workflow that enforces the
   docs-only credential, privacy, artifact, and scaffold boundary.
 

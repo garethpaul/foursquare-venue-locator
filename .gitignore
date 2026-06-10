@@ -21,3 +21,7 @@ foursquare_credentials.*
 *.kml
 location-traces/
 LocationTraces/
+camera-captures/
+CameraCaptures/
+camera-recordings/
+CameraRecordings/

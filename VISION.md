@@ -40,6 +40,8 @@ Priority:
 - Keep Xcode user-state artifacts out of git
 - Keep local location traces, simulator routes, and raw coordinate fixtures out
   of git until sanitized fixtures are explicitly documented
+- Keep local camera captures and recordings out of git until sanitized media
+  fixtures and metadata handling are explicitly reviewed
 - Keep lint, test, build, and check targets available before app source exists
 - Prefer a small verifiable prototype over broad app scaffolding
 - Keep hosted checks aligned with the docs-only credential and privacy boundary

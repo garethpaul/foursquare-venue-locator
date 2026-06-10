@@ -12,6 +12,7 @@ MAKE_GATES_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-make-gate-alia
 XCODE_USER_STATE_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-xcode-user-state-guard.md"
 LOCAL_ENVRC_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-envrc-guard.md"
 LOCAL_XCCONFIG_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-xcconfig-guard.md"
+CAMERA_OUTPUT_PLAN="$ROOT_DIR/docs/plans/2026-06-10-foursquare-venue-camera-output-guard.md"
 CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-boundary-checks.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
@@ -42,6 +43,7 @@ for path in \
   "docs/plans/2026-06-09-foursquare-venue-make-gate-aliases.md" \
   "docs/plans/2026-06-09-foursquare-venue-signing-artifact-guard.md" \
   "docs/plans/2026-06-09-foursquare-venue-xcode-user-state-guard.md" \
+  "docs/plans/2026-06-10-foursquare-venue-camera-output-guard.md" \
   "docs/plans/2026-06-08-foursquare-venue-locator-baseline.md" \
   "docs/plans/2026-06-10-hosted-boundary-checks.md"; do
   require_file "$path"
@@ -84,6 +86,11 @@ if git -C "$ROOT_DIR" ls-files | grep -Eq '\.(gpx|geojson|kml)$|(^|/)location-tr
   exit 1
 fi
 
+if git -C "$ROOT_DIR" ls-files | grep -Eq '(^|/)(camera-captures|CameraCaptures|camera-recordings|CameraRecordings)/'; then
+  printf '%s\n' "Local camera captures and recordings must not be tracked." >&2
+  exit 1
+fi
+
 if git -C "$ROOT_DIR" grep -nE 'pk\.eyJ|client_secret=|client_id=|fsq3[A-Za-z0-9_-]+' -- . ':!scripts/check-baseline.sh'; then
   printf '%s\n' "Tracked files must not contain raw Foursquare, Mapbox, or query-string credentials." >&2
   exit 1
@@ -106,6 +113,13 @@ done
 for pattern in "*.gpx" "*.geojson" "*.kml" "location-traces/" "LocationTraces/"; do
   if ! grep -Fxq "$pattern" "$ROOT_DIR/.gitignore"; then
     printf '%s\n' ".gitignore must exclude local location trace artifacts: $pattern" >&2
+    exit 1
+  fi
+done
+
+for pattern in "camera-captures/" "CameraCaptures/" "camera-recordings/" "CameraRecordings/"; do
+  if ! grep -Fxq "$pattern" "$ROOT_DIR/.gitignore"; then
+    printf '%s\n' ".gitignore must exclude local camera output: $pattern" >&2
     exit 1
   fi
 done
@@ -231,6 +245,11 @@ fi
 
 if ! grep -Fq "status: completed" "$LOCAL_XCCONFIG_PLAN"; then
   printf '%s\n' "Local xcconfig guard plan must be marked completed." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$CAMERA_OUTPUT_PLAN"; then
+  printf '%s\n' "Camera output guard plan must be marked completed." >&2
   exit 1
 fi
 

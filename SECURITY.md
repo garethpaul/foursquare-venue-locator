@@ -41,6 +41,9 @@ Helpful reports include:
 - Local GPX, GeoJSON, KML, and location traces can expose precise coordinates
   and movement patterns; keep them out of git unless a future sanitized fixture
   policy is added.
+- Local AR camera captures and recordings can expose people, private spaces,
+  and embedded location metadata; keep them out of git unless a sanitized
+  fixture policy is explicitly reviewed.
 - Future ARKit, CoreLocation, and camera code should document permission prompts,
   physical-device verification, credential configuration, and whether any
   location or camera data is persisted or transmitted.
