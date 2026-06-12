@@ -300,11 +300,32 @@ if ! grep -Fq "workflow_dispatch:" "$CI_WORKFLOW" ||
   exit 1
 fi
 
-if ! grep -Fq "status: completed" "$CREDENTIAL_PLAN" ||
-  ! grep -Fq "make check" "$CREDENTIAL_PLAN"; then
-  printf '%s\n' "Checkout credential boundary plan must be completed and record verification." >&2
-  exit 1
-fi
+python3 - "$CREDENTIAL_PLAN" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+plan = Path(sys.argv[1]).read_text()
+frontmatter = plan.split("---", 2)[1]
+statuses = re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE)
+verification = plan.split("## Verification Completed\n", 1)[-1]
+required = (
+    "All four Make gates",
+    "push run `27392652005`",
+    "pull-request run `27392656600`",
+    "push run `27392668931`",
+    "CodeQL run `27402320622`",
+)
+
+if (
+    statuses != ["status: completed"]
+    or any(item not in verification for item in required)
+    or re.search(r"\b(?:pending|todo|tbd|not run)\b", verification, re.IGNORECASE)
+):
+    raise SystemExit(
+        "Checkout credential boundary plan must remain completed with actual verification recorded."
+    )
+PY
 
 if ! grep -Fq "status: completed" "$CI_PLAN" ||
   ! grep -Fq "make check" "$CI_PLAN"; then
