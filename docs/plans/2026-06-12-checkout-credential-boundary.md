@@ -1,7 +1,7 @@
 ---
 title: Checkout Credential Boundary
 date: 2026-06-12
-status: planned
+status: completed
 execution: ci-security
 ---
 

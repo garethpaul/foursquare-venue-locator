@@ -60,7 +60,8 @@ make check
   documentation, privacy, and credential guardrails. The `lint`, `test`, and
   `build` targets currently delegate to the static baseline so the repository
   has a consistent local gate before app code exists.
-- GitHub Actions runs the same boundary checks for pushes and pull requests.
+- GitHub Actions runs the same boundary checks for pushes and pull requests
+  with read-only permissions and no persisted checkout credentials.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
