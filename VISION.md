@@ -45,6 +45,7 @@ Priority:
 - Keep lint, test, build, and check targets available before app source exists
 - Prefer a small verifiable prototype over broad app scaffolding
 - Keep hosted checks aligned with the docs-only credential and privacy boundary
+- Keep checkout credentials unavailable to later validation steps
 
 Next priorities:
 

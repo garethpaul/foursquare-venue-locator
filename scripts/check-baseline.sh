@@ -14,6 +14,7 @@ LOCAL_ENVRC_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-envrc-guard.m
 LOCAL_XCCONFIG_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-xcconfig-guard.md"
 CAMERA_OUTPUT_PLAN="$ROOT_DIR/docs/plans/2026-06-10-foursquare-venue-camera-output-guard.md"
 CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-boundary-checks.md"
+CREDENTIAL_PLAN="$ROOT_DIR/docs/plans/2026-06-12-checkout-credential-boundary.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -48,6 +49,8 @@ for path in \
   "docs/plans/2026-06-10-hosted-boundary-checks.md"; do
   require_file "$path"
 done
+
+require_file "docs/plans/2026-06-12-checkout-credential-boundary.md"
 
 makefile="$ROOT_DIR/Makefile"
 if ! grep -Eq '^\.PHONY: .*build.*check.*lint.*test|^\.PHONY: .*build.*lint.*test.*check' "$makefile" ||
@@ -263,14 +266,43 @@ if ! grep -Fq "make check" "$LOCAL_XCCONFIG_PLAN"; then
   exit 1
 fi
 
+if ! awk '
+  /^[[:space:]]*uses:[[:space:]]*actions\/checkout@/ {
+    checkout_count++
+    if ($0 == "        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.2") state = 1
+    else invalid = 1
+    next
+  }
+  /^[[:space:]]*persist-credentials[[:space:]]*:/ { credential_count++ }
+  /^        with:[[:space:]]*$/ { with_count++ }
+  state == 1 && $0 == "        with:" { state = 2; next }
+  state == 1 && /^[[:space:]]*(#.*)?$/ { next }
+  state == 1 { invalid = 1; state = 0 }
+  state == 2 && $0 == "          persist-credentials: false" { contract_count++; state = 0; next }
+  state == 2 && /^[[:space:]]*(#.*)?$/ { next }
+  state == 2 { invalid = 1; state = 0 }
+  END {
+    if (checkout_count != 1 || with_count != 1 || credential_count != 1 ||
+        contract_count != 1 || invalid != 0) exit 1
+  }
+' "$CI_WORKFLOW"; then
+  printf '%s\n' "Checkout must be uniquely pinned with credential persistence disabled." >&2
+  exit 1
+fi
+
 if ! grep -Fq "workflow_dispatch:" "$CI_WORKFLOW" ||
   ! grep -Fq "contents: read" "$CI_WORKFLOW" ||
   ! grep -Fq "cancel-in-progress: true" "$CI_WORKFLOW" ||
   ! grep -Fq "runs-on: ubuntu-24.04" "$CI_WORKFLOW" ||
   ! grep -Fq "timeout-minutes: 5" "$CI_WORKFLOW" ||
-  ! grep -Fq "actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10" "$CI_WORKFLOW" ||
   ! grep -Fq "run: make check" "$CI_WORKFLOW"; then
   printf '%s\n' "GitHub Actions must keep the bounded docs-only boundary check contract." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$CREDENTIAL_PLAN" ||
+  ! grep -Fq "make check" "$CREDENTIAL_PLAN"; then
+  printf '%s\n' "Checkout credential boundary plan must be completed and record verification." >&2
   exit 1
 fi
 

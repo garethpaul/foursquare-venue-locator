@@ -1,5 +1,11 @@
 # Changes
 
+## 2026-06-12
+
+- Disabled checkout credential persistence in the docs-only GitHub Actions job.
+- Added a structural check that rejects duplicate, misplaced, or weakened
+  checkout credential settings.
+
 ## 2026-06-10
 
 - Added ignore and tracked-file guards for future local AR camera captures and
