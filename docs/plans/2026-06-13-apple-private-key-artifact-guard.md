@@ -1,7 +1,7 @@
 ---
 title: Apple Private Key Artifact Guard
 type: security
-status: planned
+status: completed
 date: 2026-06-13
 ---
 
@@ -68,8 +68,27 @@ Files: `README.md`, `SECURITY.md`, `VISION.md`, `CHANGES.md`, `AGENTS.md`
 
 ## Work Completed
 
-Pending implementation.
+- Added `.p8`, `.pfx`, `.pem`, and `.key` ignore rules.
+- Added case-tolerant tracked-extension rejection for common private-key
+  containers.
+- Added tracked-content rejection for PEM-style private-key block markers while
+  excluding the checker source from matching its own policy expression.
+- Updated repository guidance and completed-plan enforcement for the extended
+  signing and private-key boundary.
 
 ## Verification Completed
 
-Pending implementation and verification.
+- The ignore rule mutation failed after removing the `*.p8` pattern.
+- The tracked extension mutation failed after force-adding a `.P8` fixture in
+  an alternate Git index.
+- The private-key marker mutation failed after force-adding a marker-bearing
+  text fixture in an alternate Git index.
+- `make check`, `make lint`, `make test`, and `make build` passed the maintained
+  docs-only baseline.
+- `sh -n scripts/check-baseline.sh`, overview SVG parsing, checker/template mode
+  verification, and `git diff --check` passed.
+- Intended-path artifact and secret scans found no generated files or embedded
+  credentials.
+- The hosted pull-request check and code-scanning results are recorded against
+  the exact pushed head in the external engineering tracker. Embedding that SHA
+  here would create a new head without exact-head hosted evidence.

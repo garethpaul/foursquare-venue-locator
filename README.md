@@ -82,7 +82,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Future implementation changes should add device verification notes and
   dependency manifests in the same change that introduces app source.
 - Future Apple signing artifacts, provisioning profiles, archives, IPA exports,
-  and Xcode result bundles are ignored and must stay out of git.
+  Xcode result bundles, and private key containers (`.p8`, `.pfx`, `.pem`, and
+  `.key`) are ignored and must stay out of git.
 - Future Xcode user-state files and workspace user data are ignored and must
   stay out of git.
 - Future GPX, GeoJSON, KML, and local location-trace folders are treated as
@@ -99,6 +100,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   saved location traces as security-sensitive surfaces.
 - Treat Apple signing artifacts and export archives as sensitive local files,
   not project documentation or source.
+- Treat App Store Connect, signing, and TLS private key containers and block
+  material as local secrets that must never be tracked.
 - Treat `.envrc` as a local credential file when using direnv or similar
   tooling.
 - Treat `*.xcconfig` files as local build settings unless a future app baseline

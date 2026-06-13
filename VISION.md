@@ -39,6 +39,8 @@ Priority:
   dependency manifests land
 - Keep Apple signing artifacts, provisioning profiles, archives, and result
   bundles out of git
+- Keep App Store Connect, signing, and TLS private key containers and block
+  material out of git
 - Keep Xcode user-state artifacts out of git
 - Keep local location traces, simulator routes, and raw coordinate fixtures out
   of git until sanitized fixtures are explicitly documented

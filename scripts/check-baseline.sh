@@ -16,6 +16,7 @@ CAMERA_OUTPUT_PLAN="$ROOT_DIR/docs/plans/2026-06-10-foursquare-venue-camera-outp
 CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-boundary-checks.md"
 CREDENTIAL_PLAN="$ROOT_DIR/docs/plans/2026-06-12-checkout-credential-boundary.md"
 ENV_TEMPLATE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-foursquare-venue-env-template-schema.md"
+PRIVATE_KEY_PLAN="$ROOT_DIR/docs/plans/2026-06-13-apple-private-key-artifact-guard.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -81,6 +82,16 @@ if git -C "$ROOT_DIR" ls-files | grep -Eq '\.(mobileprovision|p12|cer|ipa|xcarch
   exit 1
 fi
 
+if git -C "$ROOT_DIR" ls-files | grep -Eq '\.([Pp]8|[Pp][Ff][Xx]|[Pp][Ee][Mm]|[Kk][Ee][Yy])$'; then
+  printf '%s\n' "Private key container files must not be tracked." >&2
+  exit 1
+fi
+
+if git -C "$ROOT_DIR" grep -nE -- '-----BEGIN ([A-Z0-9]+ )*PRIVATE KEY-----' -- . ':!scripts/check-baseline.sh'; then
+  printf '%s\n' "Tracked files must not contain private key material." >&2
+  exit 1
+fi
+
 if git -C "$ROOT_DIR" ls-files | grep -Eq '\.swift$|\.xcodeproj/|\.xcworkspace/|(^|/)Podfile$|(^|/)Package.swift$'; then
   printf '%s\n' "Docs-only baseline must be updated before app source, Xcode projects, or dependency manifests land." >&2
   exit 1
@@ -134,6 +145,13 @@ fi
 for pattern in "*.mobileprovision" "*.p12" "*.cer" "*.ipa" "*.xcarchive" "*.xcresult"; do
   if ! grep -Fxq "$pattern" "$ROOT_DIR/.gitignore"; then
     printf '%s\n' ".gitignore must exclude Apple signing and export artifacts: $pattern" >&2
+    exit 1
+  fi
+done
+
+for pattern in "*.p8" "*.pfx" "*.pem" "*.key"; do
+  if ! grep -Fxq "$pattern" "$ROOT_DIR/.gitignore"; then
+    printf '%s\n' ".gitignore must exclude private key containers: $pattern" >&2
     exit 1
   fi
 done
@@ -391,6 +409,15 @@ if ! grep -Fq "exactly two plain placeholder assignments" "$ROOT_DIR/README.md" 
   ! grep -Fq "exact non-executable two-key schema" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "Enforced an exact non-executable two-key schema" "$ROOT_DIR/CHANGES.md"; then
   printf '%s\n' "Project guidance must document the exact environment template schema." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$PRIVATE_KEY_PLAN" ||
+  ! grep -Fq "ignore rule mutation failed" "$PRIVATE_KEY_PLAN" ||
+  ! grep -Fq "tracked extension mutation failed" "$PRIVATE_KEY_PLAN" ||
+  ! grep -Fq "private-key marker mutation failed" "$PRIVATE_KEY_PLAN" ||
+  ! grep -Fq "hosted pull-request check" "$PRIVATE_KEY_PLAN"; then
+  printf '%s\n' "Private key artifact plan must record completed verification." >&2
   exit 1
 fi
 

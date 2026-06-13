@@ -37,6 +37,8 @@ Helpful reports include:
   configuration.
 - Apple signing artifacts, provisioning profiles, archives, IPA exports, and
   Xcode result bundles are local outputs and must not be committed.
+- App Store Connect, signing, and TLS private key containers (`.p8`, `.pfx`,
+  `.pem`, and `.key`) and private-key block material must not be committed.
 - Xcode user-state files and workspace user data are local outputs and must not
   be committed.
 - Local GPX, GeoJSON, KML, and location traces can expose precise coordinates

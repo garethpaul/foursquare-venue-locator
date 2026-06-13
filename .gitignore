@@ -7,6 +7,10 @@
 *.cer
 *.mobileprovision
 *.p12
+*.p8
+*.pfx
+*.pem
+*.key
 *.xcarchive
 *.xcresult
 *.ipa

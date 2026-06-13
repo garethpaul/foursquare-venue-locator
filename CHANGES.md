@@ -2,6 +2,10 @@
 
 ## 2026-06-13
 
+- Ignored and rejected common App Store Connect, signing, and TLS private key
+  containers plus tracked private-key block material.
+- Added static mutation coverage for ignore rules, tracked extensions, and key
+  markers.
 - Enforced an exact non-executable two-key schema for the placeholder-only
   Foursquare environment template.
 
