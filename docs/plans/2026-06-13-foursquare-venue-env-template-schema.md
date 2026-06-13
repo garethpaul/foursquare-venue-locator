@@ -1,7 +1,7 @@
 ---
 title: Foursquare Venue Environment Template Schema
 date: 2026-06-13
-status: in_progress
+status: completed
 execution: code
 ---
 
@@ -37,3 +37,22 @@ can therefore drift beyond the narrow credential schema while still passing.
   the file executable; each hostile mutation must fail.
 - Take one bounded exact-head pull-request and CodeQL snapshot after push; do
   not poll.
+
+## Work Completed
+
+- Replaced phrase-only placeholder checks with an exact line-oriented schema
+  for the two documented Foursquare variables.
+- Rejected extra variables, duplicate keys, shell syntax, changed placeholder
+  values, executable working-tree state, and non-`100644` tracked mode.
+- Updated repository guidance and added a completed-plan evidence contract.
+
+## Verification Completed
+
+- A pristine copied tree passed `make check` with completed-plan evidence
+  supplied in the copy.
+- The extra assignment mutation failed after adding a third variable.
+- The command substitution mutation failed after adding `$(id)`.
+- The duplicate key mutation failed after repeating the client ID.
+- The executable mode mutation failed after setting the template executable.
+- The hosted pull-request check is a post-push evidence step; its bounded
+  exact-head result is recorded after the implementation commit is pushed.

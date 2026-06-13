@@ -25,6 +25,8 @@ Priority:
 - Keep Foursquare credentials and location data out of git
 - Keep a non-secret .env.example available for future local Foursquare
   configuration
+- Keep `.env.example` on an exact non-executable two-key schema without shell
+  execution syntax
 - Keep `.envrc` out of git because direnv-style local files can export real
   credentials
 - Keep `*.xcconfig` out of git because local Xcode build settings can contain

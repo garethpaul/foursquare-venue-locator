@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-13
+
+- Enforced an exact non-executable two-key schema for the placeholder-only
+  Foursquare environment template.
+
 ## 2026-06-12
 
 - Disabled checkout credential persistence in the docs-only GitHub Actions job.

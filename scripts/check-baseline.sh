@@ -15,6 +15,7 @@ LOCAL_XCCONFIG_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-xcconfig-g
 CAMERA_OUTPUT_PLAN="$ROOT_DIR/docs/plans/2026-06-10-foursquare-venue-camera-output-guard.md"
 CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-boundary-checks.md"
 CREDENTIAL_PLAN="$ROOT_DIR/docs/plans/2026-06-12-checkout-credential-boundary.md"
+ENV_TEMPLATE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-foursquare-venue-env-template-schema.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -51,6 +52,7 @@ for path in \
 done
 
 require_file "docs/plans/2026-06-12-checkout-credential-boundary.md"
+require_file "docs/plans/2026-06-13-foursquare-venue-env-template-schema.md"
 
 makefile="$ROOT_DIR/Makefile"
 if ! grep -Eq '^\.PHONY: .*build.*check.*lint.*test|^\.PHONY: .*build.*lint.*test.*check' "$makefile" ||
@@ -99,10 +101,33 @@ if git -C "$ROOT_DIR" grep -nE 'pk\.eyJ|client_secret=|client_id=|fsq3[A-Za-z0-9
   exit 1
 fi
 
-if ! grep -Fxq "FOURSQUARE_CLIENT_ID=replace-with-your-client-id" "$ROOT_DIR/.env.example" ||
-  ! grep -Fxq "FOURSQUARE_CLIENT_SECRET=replace-with-your-client-secret" "$ROOT_DIR/.env.example" ||
-  grep -Eq 'pk\.eyJ|fsq3[A-Za-z0-9_-]+' "$ROOT_DIR/.env.example"; then
-  printf '%s\n' ".env.example must contain only non-secret Foursquare placeholders." >&2
+python3 - "$ROOT_DIR/.env.example" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+lines = Path(sys.argv[1]).read_text().splitlines()
+assignments = []
+for number, line in enumerate(lines, start=1):
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#"):
+        continue
+    match = re.fullmatch(r"([A-Z][A-Z0-9_]*)=([^\s]+)", line)
+    if not match:
+        raise SystemExit(f".env.example line {number} is not a plain placeholder assignment.")
+    assignments.append(match.groups())
+
+expected = [
+    ("FOURSQUARE_CLIENT_ID", "replace-with-your-client-id"),
+    ("FOURSQUARE_CLIENT_SECRET", "replace-with-your-client-secret"),
+]
+if assignments != expected:
+    raise SystemExit(".env.example must contain exactly the two documented Foursquare placeholders.")
+PY
+
+if [ -x "$ROOT_DIR/.env.example" ] ||
+  [ "$(git -C "$ROOT_DIR" ls-files -s -- .env.example | awk '{print $1}')" != "100644" ]; then
+  printf '%s\n' ".env.example must remain a regular non-executable tracked template." >&2
   exit 1
 fi
 
@@ -327,9 +352,45 @@ if (
     )
 PY
 
+python3 - "$ENV_TEMPLATE_PLAN" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+plan = Path(sys.argv[1]).read_text()
+frontmatter = plan.split("---", 2)[1]
+statuses = re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE)
+verification = plan.split("## Verification Completed\n", 1)[-1]
+required = (
+    "extra assignment mutation failed",
+    "command substitution mutation failed",
+    "duplicate key mutation failed",
+    "executable mode mutation failed",
+    "hosted pull-request check",
+)
+
+if (
+    statuses != ["status: completed"]
+    or "## Verification Completed\n" not in plan
+    or any(item not in verification for item in required)
+    or re.search(r"\b(?:pending|todo|tbd|not run)\b", verification, re.IGNORECASE)
+):
+    raise SystemExit(
+        "Environment template schema plan must remain completed with actual verification recorded."
+    )
+PY
+
 if ! grep -Fq "status: completed" "$CI_PLAN" ||
   ! grep -Fq "make check" "$CI_PLAN"; then
   printf '%s\n' "Hosted boundary checks plan must be completed and record verification." >&2
+  exit 1
+fi
+
+if ! grep -Fq "exactly two plain placeholder assignments" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "exact two-key schema" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "exact non-executable two-key schema" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "Enforced an exact non-executable two-key schema" "$ROOT_DIR/CHANGES.md"; then
+  printf '%s\n' "Project guidance must document the exact environment template schema." >&2
   exit 1
 fi
 

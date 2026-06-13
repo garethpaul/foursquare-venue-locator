@@ -67,9 +67,9 @@ When the required SDK or runtime is unavailable, use static checks and source re
 
 ## Configuration and Secrets
 
-- `.env.example` contains placeholder values for future local Foursquare
-  configuration. Copy it to `.env` for local experiments and keep real values
-  out of git.
+- `.env.example` contains placeholder values and exactly two plain placeholder assignments
+  for future local Foursquare configuration and remains non-executable. Copy it
+  to `.env` for local experiments and keep real values out of git.
 - Local direnv files such as `.envrc` are ignored because they can export real
   Foursquare credentials or machine-specific settings.
 - Local Xcode build-setting files such as `*.xcconfig` are ignored because they
