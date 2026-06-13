@@ -432,7 +432,7 @@ if ! grep -Fq "status: completed" "$CASE_INSENSITIVE_SIGNING_PLAN" ||
   exit 1
 fi
 
-if ! grep -Fq "regardless of extension case" "$ROOT_DIR/README.md" ||
+if ! grep -Fq "standard lowercase ignore patterns and are rejected if tracked" "$ROOT_DIR/README.md" ||
   ! grep -Fq "must not be committed, regardless" "$ROOT_DIR/SECURITY.md" ||
   ! grep -Fq "regardless of filename-extension case" "$ROOT_DIR/VISION.md" ||
   ! grep -Fq "case-insensitive" "$ROOT_DIR/CHANGES.md" ||
