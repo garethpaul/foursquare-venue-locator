@@ -2,7 +2,7 @@
 title: Location-Independent Venue Locator Verification
 type: reliability
 date: 2026-06-13
-status: planned
+status: completed
 execution: code
 ---
 
@@ -39,8 +39,20 @@ documented gate works when Make is invoked outside the checkout.
 
 ## Work Completed
 
-Pending implementation.
+- Derived the repository root from the loaded Makefile and invoked the static
+  checker through that absolute path.
+- Extended the baseline with rooted-Makefile, completed-plan, external-run, and
+  synchronized-guidance contracts.
+- Preserved environment-template, credential, private-key, signing-artifact,
+  scaffold, privacy, workflow, and generated-artifact boundaries unchanged.
 
 ## Verification Completed
 
-Pending implementation and verification.
+- `make check`, `make lint`, `make test`, and `make build` passed at repository
+  root and from /tmp through the absolute Makefile path.
+- Five isolated hostile root-derivation, checker-path, documentation,
+  plan-status, and verification-evidence mutations were rejected.
+- Shell syntax, `git diff --check`, exact-path review, added-line secret/signing
+  inspection, and generated-artifact inspection passed.
+- No application runtime exists in the repository; Xcode, simulator, device,
+  location, and live venue behavior are not claimed.

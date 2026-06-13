@@ -2,6 +2,8 @@
 
 ## 2026-06-13
 
+- Made docs-only verification independent of the caller's working directory by
+  resolving the baseline checker from the loaded Makefile.
 - Made tracked Apple signing artifact rejection case-insensitive.
 - Ignored and rejected common App Store Connect, signing, and TLS private key
   containers plus tracked private-key block material.
