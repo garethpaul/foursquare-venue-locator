@@ -2,6 +2,7 @@
 
 ## 2026-06-13
 
+- Made tracked Apple signing artifact rejection case-insensitive.
 - Ignored and rejected common App Store Connect, signing, and TLS private key
   containers plus tracked private-key block material.
 - Added static mutation coverage for ignore rules, tracked extensions, and key

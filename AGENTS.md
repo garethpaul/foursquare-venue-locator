@@ -40,7 +40,7 @@
 - Future Foursquare settings should use local-only names such as `FOURSQUARE_CLIENT_ID` and `FOURSQUARE_CLIENT_SECRET`; do not commit real values, generated config, or API query strings that include credentials.
 - Future iOS app targets should include clear `NSLocationWhenInUseUsageDescription` and `NSCameraUsageDescription` purpose strings before any ARKit, CoreLocation, or camera code is added.
 - Future implementation changes should add device verification notes and dependency manifests in the same change that introduces app source.
-- Future Apple signing artifacts, provisioning profiles, archives, IPA exports, and Xcode result bundles are ignored and must stay out of git.
+- Future Apple signing artifacts, provisioning profiles, archives, IPA exports, and Xcode result bundles must stay out of git regardless of filename-extension case.
 - App Store Connect, signing, and TLS private key files (`.p8`, `.pfx`, `.pem`,
   and `.key`) and private-key block material must stay out of git.
 

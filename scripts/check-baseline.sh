@@ -17,6 +17,7 @@ CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-boundary-checks.md"
 CREDENTIAL_PLAN="$ROOT_DIR/docs/plans/2026-06-12-checkout-credential-boundary.md"
 ENV_TEMPLATE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-foursquare-venue-env-template-schema.md"
 PRIVATE_KEY_PLAN="$ROOT_DIR/docs/plans/2026-06-13-apple-private-key-artifact-guard.md"
+CASE_INSENSITIVE_SIGNING_PLAN="$ROOT_DIR/docs/plans/2026-06-13-case-insensitive-signing-artifacts.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -54,6 +55,7 @@ done
 
 require_file "docs/plans/2026-06-12-checkout-credential-boundary.md"
 require_file "docs/plans/2026-06-13-foursquare-venue-env-template-schema.md"
+require_file "docs/plans/2026-06-13-case-insensitive-signing-artifacts.md"
 
 makefile="$ROOT_DIR/Makefile"
 if ! grep -Eq '^\.PHONY: .*build.*check.*lint.*test|^\.PHONY: .*build.*lint.*test.*check' "$makefile" ||
@@ -77,7 +79,8 @@ if git -C "$ROOT_DIR" ls-files | grep -Eq '\.xcconfig$'; then
   exit 1
 fi
 
-if git -C "$ROOT_DIR" ls-files | grep -Eq '\.(mobileprovision|p12|cer|ipa|xcarchive|xcresult)$'; then
+if git -C "$ROOT_DIR" ls-files | tr '[:upper:]' '[:lower:]' |
+  grep -Eq '\.(mobileprovision|p12|cer|ipa|xcarchive|xcresult)$'; then
   printf '%s\n' "Apple signing, archive, and result artifacts must not be tracked." >&2
   exit 1
 fi
@@ -418,6 +421,23 @@ if ! grep -Fq "status: completed" "$PRIVATE_KEY_PLAN" ||
   ! grep -Fq "private-key marker mutation failed" "$PRIVATE_KEY_PLAN" ||
   ! grep -Fq "hosted pull-request check" "$PRIVATE_KEY_PLAN"; then
   printf '%s\n' "Private key artifact plan must record completed verification." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$CASE_INSENSITIVE_SIGNING_PLAN" ||
+  ! grep -Fq "five hostile mutations were rejected" "$CASE_INSENSITIVE_SIGNING_PLAN" ||
+  ! grep -Fq "all four Make gates passed" "$CASE_INSENSITIVE_SIGNING_PLAN" ||
+  ! grep -Fq "No signing artifact" "$CASE_INSENSITIVE_SIGNING_PLAN"; then
+  printf '%s\n' "Case-insensitive signing artifact plan must record completed verification." >&2
+  exit 1
+fi
+
+if ! grep -Fq "regardless of extension case" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "must not be committed, regardless" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "regardless of filename-extension case" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "case-insensitive" "$ROOT_DIR/CHANGES.md" ||
+  ! grep -Fq "regardless of filename-extension case" "$ROOT_DIR/AGENTS.md"; then
+  printf '%s\n' "Project guidance must preserve case-insensitive signing artifact rejection." >&2
   exit 1
 fi
 

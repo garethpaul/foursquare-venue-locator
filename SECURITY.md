@@ -36,7 +36,8 @@ Helpful reports include:
   committed unless a future app baseline documents sanitized checked-in
   configuration.
 - Apple signing artifacts, provisioning profiles, archives, IPA exports, and
-  Xcode result bundles are local outputs and must not be committed.
+  Xcode result bundles are local outputs and must not be committed, regardless
+  of filename-extension case.
 - App Store Connect, signing, and TLS private key containers (`.p8`, `.pfx`,
   `.pem`, and `.key`) and private-key block material must not be committed.
 - Xcode user-state files and workspace user data are local outputs and must not

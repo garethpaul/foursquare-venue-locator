@@ -83,7 +83,7 @@ When the required SDK or runtime is unavailable, use static checks and source re
   dependency manifests in the same change that introduces app source.
 - Future Apple signing artifacts, provisioning profiles, archives, IPA exports,
   Xcode result bundles, and private key containers (`.p8`, `.pfx`, `.pem`, and
-  `.key`) are ignored and must stay out of git.
+  `.key`) are ignored and must stay out of git regardless of extension case.
 - Future Xcode user-state files and workspace user data are ignored and must
   stay out of git.
 - Future GPX, GeoJSON, KML, and local location-trace folders are treated as

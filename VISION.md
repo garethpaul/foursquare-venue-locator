@@ -38,7 +38,7 @@ Priority:
 - Require baseline updates before future app source, project files, or
   dependency manifests land
 - Keep Apple signing artifacts, provisioning profiles, archives, and result
-  bundles out of git
+  bundles out of git regardless of filename-extension case
 - Keep App Store Connect, signing, and TLS private key containers and block
   material out of git
 - Keep Xcode user-state artifacts out of git

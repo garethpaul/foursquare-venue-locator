@@ -1,7 +1,7 @@
 ---
 title: Case Insensitive Signing Artifact Guard
 type: security
-status: planned
+status: completed
 date: 2026-06-13
 ---
 
@@ -33,3 +33,10 @@ filename-extension case.
 
 - Rewriting history, rotating credentials, or changing repository rulesets.
 - Adding application source, an Xcode project, dependencies, or runtime code.
+
+## Verification Completed
+
+- The five hostile mutations were rejected using isolated alternate indexes.
+- The all four Make gates passed result was confirmed on the final tree.
+- Shell syntax, SVG parsing, diff, artifact, and secret audits passed.
+- No signing artifact or credential was committed or generated.
