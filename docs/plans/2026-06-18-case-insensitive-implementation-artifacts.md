@@ -1,7 +1,7 @@
 ---
 title: Case-Insensitive Implementation Artifact Boundary
 type: testing
-status: planned
+status: implemented
 date: 2026-06-18
 execution: code
 ---
@@ -102,6 +102,16 @@ Document the case-insensitive portability boundary and actual validation.
 - The repository remains intentionally non-executable, so validation proves
   maintenance policy rather than application runtime behavior.
 
-## Verification Completed
+## Implementation Verification
 
-Pending implementation and validation.
+The tracked-path implementation boundary now lowercases `git ls-files` output
+before matching the existing Swift, Xcode, CocoaPods, and SwiftPM artifact
+classes. The patterns remain path-anchored so similarly named documentation
+files are outside the rejection boundary.
+
+Repository-root and external-directory Make gates passed for `check`, `lint`,
+`test`, and `build`. Six isolated tracked implementation artifacts were
+rejected across lowercase and mixed-case Swift, Xcode project/workspace,
+CocoaPods, and SwiftPM names. Two nearby documentation filenames remained
+accepted. Four additional mutations removing normalization, weakening the Xcode
+pattern, removing guidance, or reopening plan status were rejected.

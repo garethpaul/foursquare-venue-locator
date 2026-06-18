@@ -19,6 +19,7 @@ ENV_TEMPLATE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-foursquare-venue-env-template
 PRIVATE_KEY_PLAN="$ROOT_DIR/docs/plans/2026-06-13-apple-private-key-artifact-guard.md"
 CASE_INSENSITIVE_SIGNING_PLAN="$ROOT_DIR/docs/plans/2026-06-13-case-insensitive-signing-artifacts.md"
 LOCATION_INDEPENDENT_MAKE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-location-independent-make.md"
+CASE_INSENSITIVE_IMPLEMENTATION_PLAN="$ROOT_DIR/docs/plans/2026-06-18-case-insensitive-implementation-artifacts.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -58,6 +59,7 @@ require_file "docs/plans/2026-06-12-checkout-credential-boundary.md"
 require_file "docs/plans/2026-06-13-foursquare-venue-env-template-schema.md"
 require_file "docs/plans/2026-06-13-case-insensitive-signing-artifacts.md"
 require_file "docs/plans/2026-06-13-location-independent-make.md"
+require_file "docs/plans/2026-06-18-case-insensitive-implementation-artifacts.md"
 
 if ! grep -Fq 'ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))' "$ROOT_DIR/Makefile" ||
   ! grep -Fq '"$(ROOT)/scripts/check-baseline.sh"' "$ROOT_DIR/Makefile"; then
@@ -111,7 +113,8 @@ if git -C "$ROOT_DIR" grep -nE -- '-----BEGIN ([A-Z0-9]+ )*PRIVATE KEY-----' -- 
   exit 1
 fi
 
-if git -C "$ROOT_DIR" ls-files | grep -Eq '\.swift$|\.xcodeproj/|\.xcworkspace/|(^|/)Podfile$|(^|/)Package.swift$'; then
+if git -C "$ROOT_DIR" ls-files | tr '[:upper:]' '[:lower:]' |
+  grep -Eq '\.swift$|\.xcodeproj/|\.xcworkspace/|(^|/)podfile$|(^|/)package\.swift$'; then
   printf '%s\n' "Docs-only baseline must be updated before app source, Xcode projects, or dependency manifests land." >&2
   exit 1
 fi
@@ -277,6 +280,39 @@ if ! grep -Fq "status: completed" "$IMPLEMENTATION_PLAN"; then
   printf '%s\n' "Implementation boundary plan must be marked completed." >&2
   exit 1
 fi
+
+python3 - "$ROOT_DIR/scripts/check-baseline.sh" "$CASE_INSENSITIVE_IMPLEMENTATION_PLAN" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+checker = Path(sys.argv[1]).read_text()
+plan = Path(sys.argv[2]).read_text()
+required_checker = (
+    ("git -C \"$ROOT_DIR\" ls-files | tr '[:upper:]' '[:lower:]'", 2),
+    ("\\.swift$|\\.xcodeproj/|\\.xcworkspace/|(^|/)podfile$|(^|/)package\\.swift$", 1),
+)
+if any(checker.count(item) != count for item, count in required_checker):
+    raise SystemExit("Implementation artifacts must be compared case-insensitively.")
+frontmatter = plan.split("---", 2)[1]
+statuses = re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE)
+if statuses not in (["status: implemented"], ["status: completed"]):
+    raise SystemExit("Case-insensitive implementation plan must record implemented or completed status.")
+if statuses == ["status: completed"]:
+    verification = plan.split("## Verification Completed\n", 1)[-1]
+    required_plan = (
+        "Repository-root and external-directory Make gates passed",
+        "isolated mutations were rejected",
+        "Both exact-head push and pull-request checks passed",
+        "No application source or dependency manifest was added",
+    )
+    if (
+        "## Verification Completed\n" not in plan
+        or any(item not in verification for item in required_plan)
+        or re.search(r"\b(?:pending|todo|tbd|not run|not yet)\b", verification, re.IGNORECASE)
+    ):
+        raise SystemExit("Completed case-insensitive implementation plan must record actual verification.")
+PY
 
 if ! grep -Fq "status: completed" "$CONFIG_PLAN"; then
   printf '%s\n' "Local config template plan must be marked completed." >&2
@@ -454,6 +490,15 @@ if ! grep -Fq "standard lowercase ignore patterns and are rejected if tracked" "
   ! grep -Fq "case-insensitive" "$ROOT_DIR/CHANGES.md" ||
   ! grep -Fq "regardless of filename-extension case" "$ROOT_DIR/AGENTS.md"; then
   printf '%s\n' "Project guidance must preserve case-insensitive signing artifact rejection." >&2
+  exit 1
+fi
+
+if ! grep -Fq "compared case-insensitively for macOS filesystem portability" "$ROOT_DIR/README.md" || \
+  ! grep -Fq "rejected case-insensitively while the repository remains documentation-only" "$ROOT_DIR/SECURITY.md" || \
+  ! grep -Fq "case-insensitive tracked-path checks" "$ROOT_DIR/VISION.md" || \
+  ! grep -Fq "artifact boundary case-insensitive" "$ROOT_DIR/CHANGES.md" || \
+  ! grep -Fq "boundary case-insensitive for macOS filesystem portability" "$ROOT_DIR/AGENTS.md"; then
+  printf '%s\n' "Project guidance must preserve case-insensitive implementation artifact rejection." >&2
   exit 1
 fi
 

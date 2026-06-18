@@ -56,7 +56,8 @@ make check
   rather than the caller's directory.
 
 - The docs-only baseline must be updated before app source, Xcode projects, or
-  dependency manifests are added.
+  dependency manifests are added. Tracked implementation artifact paths are
+  compared case-insensitively for macOS filesystem portability.
 
 ## Testing and Verification
 

@@ -36,7 +36,8 @@ Priority:
 - Document ARKit, CoreLocation, and physical-device requirements as soon as code exists
 - Require camera and location purpose strings before future iOS app code lands
 - Require baseline updates before future app source, project files, or
-  dependency manifests land
+  dependency manifests land, with case-insensitive tracked-path checks for
+  macOS portability
 - Keep Apple signing artifacts, provisioning profiles, archives, and result
   bundles out of git regardless of filename-extension case
 - Keep App Store Connect, signing, and TLS private key containers and block

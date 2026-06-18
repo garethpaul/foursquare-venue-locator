@@ -1,5 +1,10 @@
 # Changes
 
+## 2026-06-18
+
+- Made the docs-only Swift, Xcode, CocoaPods, and SwiftPM implementation
+  artifact boundary case-insensitive.
+
 ## 2026-06-13
 
 - Made docs-only verification independent of the caller's working directory by

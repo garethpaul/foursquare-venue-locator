@@ -51,6 +51,8 @@ Helpful reports include:
 - Future ARKit, CoreLocation, and camera code should document permission prompts,
   physical-device verification, credential configuration, and whether any
   location or camera data is persisted or transmitted.
+- Tracked Swift, Xcode, CocoaPods, and SwiftPM implementation artifacts are
+  rejected case-insensitively while the repository remains documentation-only.
 
 
 ## Dependency and Supply Chain Security
