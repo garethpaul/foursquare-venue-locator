@@ -296,22 +296,23 @@ if any(checker.count(item) != count for item, count in required_checker):
     raise SystemExit("Implementation artifacts must be compared case-insensitively.")
 frontmatter = plan.split("---", 2)[1]
 statuses = re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE)
-if statuses not in (["status: implemented"], ["status: completed"]):
-    raise SystemExit("Case-insensitive implementation plan must record implemented or completed status.")
-if statuses == ["status: completed"]:
-    verification = plan.split("## Verification Completed\n", 1)[-1]
-    required_plan = (
-        "Repository-root and external-directory Make gates passed",
-        "isolated mutations were rejected",
-        "Both exact-head push and pull-request checks passed",
-        "No application source or dependency manifest was added",
-    )
-    if (
-        "## Verification Completed\n" not in plan
-        or any(item not in verification for item in required_plan)
-        or re.search(r"\b(?:pending|todo|tbd|not run|not yet)\b", verification, re.IGNORECASE)
-    ):
-        raise SystemExit("Completed case-insensitive implementation plan must record actual verification.")
+verification = plan.split("## Verification Completed\n", 1)[-1]
+required_plan = (
+    "Repository-root and external-directory Make gates passed",
+    "Ten isolated mutations were rejected",
+    "Both exact-head push and pull-request checks passed",
+    "`b8e52585610bc37998c453e4b1ce0ac22f2e578c`",
+    "push run `27740007858`",
+    "pull-request run `27740016488`",
+    "No application source or dependency manifest was added",
+)
+if (
+    statuses != ["status: completed"]
+    or "## Verification Completed\n" not in plan
+    or any(item not in verification for item in required_plan)
+    or re.search(r"\b(?:pending|todo|tbd|not run|not yet)\b", verification, re.IGNORECASE)
+):
+    raise SystemExit("Case-insensitive implementation plan must record completed local and hosted verification.")
 PY
 
 if ! grep -Fq "status: completed" "$CONFIG_PLAN"; then
