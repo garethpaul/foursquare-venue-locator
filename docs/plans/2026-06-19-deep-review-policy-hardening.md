@@ -1,7 +1,7 @@
 ---
 title: Deep Review Policy Hardening
 type: security
-status: implemented
+status: completed
 date: 2026-06-19
 execution: code
 ---
@@ -41,8 +41,13 @@ isolated hostile suite, the repository policy, and then the documentation gate.
   bytes, case variants, config containers, implementation artifacts,
   environment schema, and workflow privilege/token mutations.
 - Root and external-directory Make gates, shell syntax, Python compilation,
-  current-tree/history credential scans, and hosted checks must pass before
-  merge.
+  and `git diff --check` passed.
+- Redacted Gitleaks scans found zero findings in the current tree and all 39
+  commits. GitHub code-scanning, secret-scanning, and Dependabot reported zero
+  open alerts.
+- Exact implementation head `7447f5bc5ba0973560648dcb1f69725d417d06a7`
+  passed pull-request Check run `27854302550`, push Check run `27854303480`,
+  and CodeQL run `27854302759`.
 
 ## Runtime Boundary
 
