@@ -1,5 +1,33 @@
 # Changes
 
+## 2026-06-19
+
+- Added a NUL-safe tracked-file policy that rejects symlinks, unexpected modes,
+  case/path variants, implementation surfaces, secret-bearing config
+  containers, and oversized blobs.
+- Added isolated hostile repository tests and made every Make gate execute
+  them before the documentation-evidence checks.
+- Hardened the workflow boundary against write permissions, secret/token
+  expressions, `pull_request_target`, unpinned checkout, and credential
+  persistence variants.
+
+## 2026-06-18
+
+- Made the docs-only Swift, Xcode, CocoaPods, and SwiftPM implementation
+  artifact boundary case-insensitive.
+
+## 2026-06-13
+
+- Made docs-only verification independent of the caller's working directory by
+  resolving the baseline checker from the loaded Makefile.
+- Made tracked Apple signing artifact rejection case-insensitive.
+- Ignored and rejected common App Store Connect, signing, and TLS private key
+  containers plus tracked private-key block material.
+- Added static mutation coverage for ignore rules, tracked extensions, and key
+  markers.
+- Enforced an exact non-executable two-key schema for the placeholder-only
+  Foursquare environment template.
+
 ## 2026-06-12
 
 - Disabled checkout credential persistence in the docs-only GitHub Actions job.

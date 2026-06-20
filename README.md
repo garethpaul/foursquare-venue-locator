@@ -14,7 +14,9 @@ This README is based on the checked-in source, manifests, scripts, and repositor
 - `SECURITY.md` - security reporting and disclosure guidance
 - `VISION.md` - project direction and maintenance guardrails
 - `docs/plans/2026-06-08-foursquare-venue-locator-baseline.md` - current baseline plan and verification record
-- `scripts/check-baseline.sh` - static validation for the checked-in documentation baseline
+- `scripts/check-baseline.sh` - documentation and verification-evidence checks
+- `scripts/check_repository_policy.py` - NUL-safe tracked-file and workflow policy
+- `tests/test_repository_policy.py` - isolated hostile repository fixtures
 
 Additional scan context:
 
@@ -22,7 +24,7 @@ Additional scan context:
 - Dependency and build manifests: `.env.example` only; no app dependency
   manifest detected
 - Entry points or build surfaces: `make check`
-- Test-looking files: `scripts/check-baseline.sh`
+- Test-looking files: `tests/test_repository_policy.py` and the baseline scripts
 
 ## Getting Started
 
@@ -51,8 +53,13 @@ make build
 make check
 ```
 
+- Use the absolute Makefile path to run the same gates from another working
+  directory. Verification resolves the checker relative to the loaded Makefile
+  rather than the caller's directory.
+
 - The docs-only baseline must be updated before app source, Xcode projects, or
-  dependency manifests are added.
+  dependency manifests are added. Tracked implementation artifact paths are
+  compared case-insensitively for macOS filesystem portability.
 
 ## Testing and Verification
 
@@ -62,14 +69,17 @@ make check
   has a consistent local gate before app code exists.
 - GitHub Actions runs the same boundary checks for pushes and pull requests
   with read-only permissions and no persisted checkout credentials.
+- The executable policy rejects tracked symlinks, unexpected executable modes,
+  case-variant sensitive artifacts, implementation files, secret-bearing
+  configuration containers, oversized blobs, and privileged workflow variants.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
 ## Configuration and Secrets
 
-- `.env.example` contains placeholder values for future local Foursquare
-  configuration. Copy it to `.env` for local experiments and keep real values
-  out of git.
+- `.env.example` contains placeholder values and exactly two plain placeholder assignments
+  for future local Foursquare configuration and remains non-executable. Copy it
+  to `.env` for local experiments and keep real values out of git.
 - Local direnv files such as `.envrc` are ignored because they can export real
   Foursquare credentials or machine-specific settings.
 - Local Xcode build-setting files such as `*.xcconfig` are ignored because they
@@ -82,7 +92,9 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Future implementation changes should add device verification notes and
   dependency manifests in the same change that introduces app source.
 - Future Apple signing artifacts, provisioning profiles, archives, IPA exports,
-  and Xcode result bundles are ignored and must stay out of git.
+  Xcode result bundles, and private key containers (`.p8`, `.pfx`, `.pem`, and
+  `.key`) use standard lowercase ignore patterns and are rejected if tracked,
+  regardless of extension case.
 - Future Xcode user-state files and workspace user data are ignored and must
   stay out of git.
 - Future GPX, GeoJSON, KML, and local location-trace folders are treated as
@@ -91,6 +103,10 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Future `camera-captures` and `camera-recordings` directories are local-only
   outputs. Intentionally sanitized media fixtures require an explicit baseline
   update and metadata review before they are tracked.
+- The repository contains no Foursquare request code, location callbacks, or UI
+  ownership code. URL encoding, response bounds, location freshness/accuracy,
+  stale callbacks, redaction, and device behavior remain requirements for the
+  first implementation rather than tested runtime claims.
 
 ## Security and Privacy Notes
 
@@ -99,6 +115,8 @@ When the required SDK or runtime is unavailable, use static checks and source re
   saved location traces as security-sensitive surfaces.
 - Treat Apple signing artifacts and export archives as sensitive local files,
   not project documentation or source.
+- Treat App Store Connect, signing, and TLS private key containers and block
+  material as local secrets that must never be tracked.
 - Treat `.envrc` as a local credential file when using direnv or similar
   tooling.
 - Treat `*.xcconfig` files as local build settings unless a future app baseline

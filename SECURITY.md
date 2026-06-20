@@ -27,15 +27,19 @@ Helpful reports include:
 - This repository appears to be a public sample, documentation, or utility project. The active security scope is the code and documentation on the default branch.
 - The repository scan did not identify production authentication, payment, or secret-management code. Treat the project as public sample code unless future changes add sensitive surfaces.
 - No primary dependency manifest was detected in the repository root. If dependencies are added later, include a manifest and prefer reproducible installation instructions.
-- `.env.example` is a placeholder-only template. Real Foursquare credentials
-  belong in the ignored local `.env` file and must not be committed.
+- `.env.example` is a placeholder-only template with an exact two-key schema
+  and no shell execution syntax. Real Foursquare credentials belong in the
+  ignored local `.env` file and must not be committed.
 - `.envrc` is treated as a local credential helper file and must not be
   committed.
 - `*.xcconfig` files are treated as local Xcode build settings and must not be
   committed unless a future app baseline documents sanitized checked-in
   configuration.
 - Apple signing artifacts, provisioning profiles, archives, IPA exports, and
-  Xcode result bundles are local outputs and must not be committed.
+  Xcode result bundles are local outputs and must not be committed, regardless
+  of filename-extension case.
+- App Store Connect, signing, and TLS private key containers (`.p8`, `.pfx`,
+  `.pem`, and `.key`) and private-key block material must not be committed.
 - Xcode user-state files and workspace user data are local outputs and must not
   be committed.
 - Local GPX, GeoJSON, KML, and location traces can expose precise coordinates
@@ -47,6 +51,14 @@ Helpful reports include:
 - Future ARKit, CoreLocation, and camera code should document permission prompts,
   physical-device verification, credential configuration, and whether any
   location or camera data is persisted or transmitted.
+- Tracked Swift, Xcode, CocoaPods, and SwiftPM implementation artifacts are
+  rejected case-insensitively while the repository remains documentation-only.
+- The executable policy reads NUL-delimited Git index records, rejects symlinks
+  and unexpected modes, scans binary blobs for private-key markers, and blocks
+  case-variant sensitive paths and credential-bearing configuration files.
+- There is no mobile implementation. Foursquare credential redaction, URL
+  encoding, response bounds, CoreLocation quality policy, callback ownership,
+  and UI state must be reviewed when app code is introduced.
 
 
 ## Dependency and Supply Chain Security
@@ -54,6 +66,8 @@ Helpful reports include:
 GitHub Actions runs the docs-only credential, signing, location-trace, and
 scaffolding guards with read-only repository permissions and no persisted
 checkout credentials before changes land.
+The single workflow also rejects write permissions, secret/token expressions,
+`pull_request_target`, additional checkout actions, and unpinned checkout refs.
 
 Dependency updates should come from trusted package managers and should keep lockfiles in sync when lockfiles exist. Do not commit credentials, private keys, tokens, generated secrets, or machine-local configuration. If a vulnerability depends on a compromised package, typosquatting risk, insecure transitive dependency, or unsafe build step, include the package name, affected version, and the path through which it is used.
 

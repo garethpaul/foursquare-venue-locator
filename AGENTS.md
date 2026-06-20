@@ -22,7 +22,8 @@
 
 ## Testing guidance
 
-- No dedicated test files were detected; treat `make check` as the minimum baseline.
+- `tests/test_repository_policy.py` exercises isolated hostile repositories;
+  treat `make check` as the minimum baseline.
 - Start with the narrowest relevant test or Make target, then run `make check` before handing off if the change is not documentation-only.
 - Keep README verification notes in sync when commands, fixtures, or supported toolchains change.
 
@@ -40,7 +41,13 @@
 - Future Foursquare settings should use local-only names such as `FOURSQUARE_CLIENT_ID` and `FOURSQUARE_CLIENT_SECRET`; do not commit real values, generated config, or API query strings that include credentials.
 - Future iOS app targets should include clear `NSLocationWhenInUseUsageDescription` and `NSCameraUsageDescription` purpose strings before any ARKit, CoreLocation, or camera code is added.
 - Future implementation changes should add device verification notes and dependency manifests in the same change that introduces app source.
-- Future Apple signing artifacts, provisioning profiles, archives, IPA exports, and Xcode result bundles are ignored and must stay out of git.
+- Keep the docs-only Swift, Xcode, CocoaPods, and SwiftPM tracked-artifact
+  boundary case-insensitive for macOS filesystem portability.
+- Future Apple signing artifacts, provisioning profiles, archives, IPA exports, and Xcode result bundles must stay out of git regardless of filename-extension case.
+- App Store Connect, signing, and TLS private key files (`.p8`, `.pfx`, `.pem`,
+  and `.key`) and private-key block material must stay out of git.
+- Do not weaken `scripts/check_repository_policy.py`: it owns NUL-safe tracked
+  path, mode, content, implementation, and workflow invariants.
 
 ## Agent workflow
 

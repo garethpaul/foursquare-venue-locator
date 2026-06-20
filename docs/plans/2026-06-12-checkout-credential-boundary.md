@@ -37,3 +37,18 @@ unexpected script change.
 - `git diff --check`
 - Mutations for `true`, duplicate settings, and misplaced settings fail.
 - Hosted GitHub Actions run
+
+## Work Completed
+
+- Disabled persisted checkout credentials on the single pinned checkout step.
+- Replaced loose text matching with a structural workflow contract that rejects
+  duplicate, true, and relocated credential settings.
+- Preserved the read-only docs-only workflow boundary.
+
+## Verification Completed
+
+- All four Make gates, shell syntax, and `git diff --check` passed locally.
+- Implementation push run `27392652005` and pull-request run `27392656600`
+  passed at commit `3009a7d5c27c7355af64e2ac32b2abfaf4f1d375`.
+- Post-merge push run `27392668931` and CodeQL run `27402320622` passed at
+  default-branch merge commit `2c134f61b0ec165f3780a8bb376516f268e6c4cb`.

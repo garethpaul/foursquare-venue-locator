@@ -15,6 +15,11 @@ LOCAL_XCCONFIG_PLAN="$ROOT_DIR/docs/plans/2026-06-09-foursquare-venue-xcconfig-g
 CAMERA_OUTPUT_PLAN="$ROOT_DIR/docs/plans/2026-06-10-foursquare-venue-camera-output-guard.md"
 CI_PLAN="$ROOT_DIR/docs/plans/2026-06-10-hosted-boundary-checks.md"
 CREDENTIAL_PLAN="$ROOT_DIR/docs/plans/2026-06-12-checkout-credential-boundary.md"
+ENV_TEMPLATE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-foursquare-venue-env-template-schema.md"
+PRIVATE_KEY_PLAN="$ROOT_DIR/docs/plans/2026-06-13-apple-private-key-artifact-guard.md"
+CASE_INSENSITIVE_SIGNING_PLAN="$ROOT_DIR/docs/plans/2026-06-13-case-insensitive-signing-artifacts.md"
+LOCATION_INDEPENDENT_MAKE_PLAN="$ROOT_DIR/docs/plans/2026-06-13-location-independent-make.md"
+CASE_INSENSITIVE_IMPLEMENTATION_PLAN="$ROOT_DIR/docs/plans/2026-06-18-case-insensitive-implementation-artifacts.md"
 CI_WORKFLOW="$ROOT_DIR/.github/workflows/check.yml"
 
 require_file() {
@@ -34,6 +39,8 @@ for path in \
   "README.md" \
   "SECURITY.md" \
   "VISION.md" \
+  "scripts/check_repository_policy.py" \
+  "tests/test_repository_policy.py" \
   "docs/readme-overview.svg" \
   "docs/plans/2026-06-09-foursquare-venue-implementation-boundary.md" \
   "docs/plans/2026-06-09-foursquare-venue-envrc-guard.md" \
@@ -51,6 +58,24 @@ for path in \
 done
 
 require_file "docs/plans/2026-06-12-checkout-credential-boundary.md"
+require_file "docs/plans/2026-06-13-foursquare-venue-env-template-schema.md"
+require_file "docs/plans/2026-06-13-case-insensitive-signing-artifacts.md"
+require_file "docs/plans/2026-06-13-location-independent-make.md"
+require_file "docs/plans/2026-06-18-case-insensitive-implementation-artifacts.md"
+
+if ! grep -Fq 'ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))' "$ROOT_DIR/Makefile" ||
+  ! grep -Fq '"$(ROOT)/scripts/check-baseline.sh"' "$ROOT_DIR/Makefile"; then
+  printf '%s\n' "Makefile verification must resolve the checker from the loaded Makefile." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$LOCATION_INDEPENDENT_MAKE_PLAN" ||
+  ! grep -Fq "from /tmp" "$LOCATION_INDEPENDENT_MAKE_PLAN" ||
+  ! grep -Fq "absolute Makefile path" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "Made docs-only verification independent" "$ROOT_DIR/CHANGES.md"; then
+  printf '%s\n' "Location-independent Make plan and guidance must record completed external verification." >&2
+  exit 1
+fi
 
 makefile="$ROOT_DIR/Makefile"
 if ! grep -Eq '^\.PHONY: .*build.*check.*lint.*test|^\.PHONY: .*build.*lint.*test.*check' "$makefile" ||
@@ -74,12 +99,24 @@ if git -C "$ROOT_DIR" ls-files | grep -Eq '\.xcconfig$'; then
   exit 1
 fi
 
-if git -C "$ROOT_DIR" ls-files | grep -Eq '\.(mobileprovision|p12|cer|ipa|xcarchive|xcresult)$'; then
+if git -C "$ROOT_DIR" ls-files | tr '[:upper:]' '[:lower:]' |
+  grep -Eq '\.(mobileprovision|p12|cer|ipa|xcarchive|xcresult)$'; then
   printf '%s\n' "Apple signing, archive, and result artifacts must not be tracked." >&2
   exit 1
 fi
 
-if git -C "$ROOT_DIR" ls-files | grep -Eq '\.swift$|\.xcodeproj/|\.xcworkspace/|(^|/)Podfile$|(^|/)Package.swift$'; then
+if git -C "$ROOT_DIR" ls-files | grep -Eq '\.([Pp]8|[Pp][Ff][Xx]|[Pp][Ee][Mm]|[Kk][Ee][Yy])$'; then
+  printf '%s\n' "Private key container files must not be tracked." >&2
+  exit 1
+fi
+
+if git -C "$ROOT_DIR" grep -nE -- '-----BEGIN ([A-Z0-9]+ )*PRIVATE KEY-----' -- . ':!scripts/check-baseline.sh'; then
+  printf '%s\n' "Tracked files must not contain private key material." >&2
+  exit 1
+fi
+
+if git -C "$ROOT_DIR" ls-files | tr '[:upper:]' '[:lower:]' |
+  grep -Eq '\.swift$|\.xcodeproj/|\.xcworkspace/|(^|/)podfile$|(^|/)package\.swift$'; then
   printf '%s\n' "Docs-only baseline must be updated before app source, Xcode projects, or dependency manifests land." >&2
   exit 1
 fi
@@ -99,16 +136,46 @@ if git -C "$ROOT_DIR" grep -nE 'pk\.eyJ|client_secret=|client_id=|fsq3[A-Za-z0-9
   exit 1
 fi
 
-if ! grep -Fxq "FOURSQUARE_CLIENT_ID=replace-with-your-client-id" "$ROOT_DIR/.env.example" ||
-  ! grep -Fxq "FOURSQUARE_CLIENT_SECRET=replace-with-your-client-secret" "$ROOT_DIR/.env.example" ||
-  grep -Eq 'pk\.eyJ|fsq3[A-Za-z0-9_-]+' "$ROOT_DIR/.env.example"; then
-  printf '%s\n' ".env.example must contain only non-secret Foursquare placeholders." >&2
+python3 - "$ROOT_DIR/.env.example" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+lines = Path(sys.argv[1]).read_text().splitlines()
+assignments = []
+for number, line in enumerate(lines, start=1):
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#"):
+        continue
+    match = re.fullmatch(r"([A-Z][A-Z0-9_]*)=([^\s]+)", line)
+    if not match:
+        raise SystemExit(f".env.example line {number} is not a plain placeholder assignment.")
+    assignments.append(match.groups())
+
+expected = [
+    ("FOURSQUARE_CLIENT_ID", "replace-with-your-client-id"),
+    ("FOURSQUARE_CLIENT_SECRET", "replace-with-your-client-secret"),
+]
+if assignments != expected:
+    raise SystemExit(".env.example must contain exactly the two documented Foursquare placeholders.")
+PY
+
+if [ -x "$ROOT_DIR/.env.example" ] ||
+  [ "$(git -C "$ROOT_DIR" ls-files -s -- .env.example | awk '{print $1}')" != "100644" ]; then
+  printf '%s\n' ".env.example must remain a regular non-executable tracked template." >&2
   exit 1
 fi
 
 for pattern in "*.mobileprovision" "*.p12" "*.cer" "*.ipa" "*.xcarchive" "*.xcresult"; do
   if ! grep -Fxq "$pattern" "$ROOT_DIR/.gitignore"; then
     printf '%s\n' ".gitignore must exclude Apple signing and export artifacts: $pattern" >&2
+    exit 1
+  fi
+done
+
+for pattern in "*.p8" "*.pfx" "*.pem" "*.key"; do
+  if ! grep -Fxq "$pattern" "$ROOT_DIR/.gitignore"; then
+    printf '%s\n' ".gitignore must exclude private key containers: $pattern" >&2
     exit 1
   fi
 done
@@ -216,6 +283,40 @@ if ! grep -Fq "status: completed" "$IMPLEMENTATION_PLAN"; then
   exit 1
 fi
 
+python3 - "$ROOT_DIR/scripts/check-baseline.sh" "$CASE_INSENSITIVE_IMPLEMENTATION_PLAN" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+checker = Path(sys.argv[1]).read_text()
+plan = Path(sys.argv[2]).read_text()
+required_checker = (
+    ("git -C \"$ROOT_DIR\" ls-files | tr '[:upper:]' '[:lower:]'", 2),
+    ("\\.swift$|\\.xcodeproj/|\\.xcworkspace/|(^|/)podfile$|(^|/)package\\.swift$", 1),
+)
+if any(checker.count(item) != count for item, count in required_checker):
+    raise SystemExit("Implementation artifacts must be compared case-insensitively.")
+frontmatter = plan.split("---", 2)[1]
+statuses = re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE)
+verification = plan.split("## Verification Completed\n", 1)[-1]
+required_plan = (
+    "Repository-root and external-directory Make gates passed",
+    "Ten isolated mutations were rejected",
+    "Both exact-head push and pull-request checks passed",
+    "`b8e52585610bc37998c453e4b1ce0ac22f2e578c`",
+    "push run `27740007858`",
+    "pull-request run `27740016488`",
+    "No application source or dependency manifest was added",
+)
+if (
+    statuses != ["status: completed"]
+    or "## Verification Completed\n" not in plan
+    or any(item not in verification for item in required_plan)
+    or re.search(r"\b(?:pending|todo|tbd|not run|not yet)\b", verification, re.IGNORECASE)
+):
+    raise SystemExit("Case-insensitive implementation plan must record completed local and hosted verification.")
+PY
+
 if ! grep -Fq "status: completed" "$CONFIG_PLAN"; then
   printf '%s\n' "Local config template plan must be marked completed." >&2
   exit 1
@@ -300,15 +401,107 @@ if ! grep -Fq "workflow_dispatch:" "$CI_WORKFLOW" ||
   exit 1
 fi
 
-if ! grep -Fq "status: completed" "$CREDENTIAL_PLAN" ||
-  ! grep -Fq "make check" "$CREDENTIAL_PLAN"; then
-  printf '%s\n' "Checkout credential boundary plan must be completed and record verification." >&2
-  exit 1
-fi
+python3 - "$CREDENTIAL_PLAN" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+plan = Path(sys.argv[1]).read_text()
+frontmatter = plan.split("---", 2)[1]
+statuses = re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE)
+verification = plan.split("## Verification Completed\n", 1)[-1]
+required = (
+    "All four Make gates",
+    "push run `27392652005`",
+    "pull-request run `27392656600`",
+    "push run `27392668931`",
+    "CodeQL run `27402320622`",
+)
+
+if (
+    statuses != ["status: completed"]
+    or any(item not in verification for item in required)
+    or re.search(r"\b(?:pending|todo|tbd|not run)\b", verification, re.IGNORECASE)
+):
+    raise SystemExit(
+        "Checkout credential boundary plan must remain completed with actual verification recorded."
+    )
+PY
+
+python3 - "$ENV_TEMPLATE_PLAN" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+plan = Path(sys.argv[1]).read_text()
+frontmatter = plan.split("---", 2)[1]
+statuses = re.findall(r"^status: .+$", frontmatter, flags=re.MULTILINE)
+verification = plan.split("## Verification Completed\n", 1)[-1]
+required = (
+    "extra assignment mutation failed",
+    "command substitution mutation failed",
+    "duplicate key mutation failed",
+    "executable mode mutation failed",
+    "hosted pull-request check",
+)
+
+if (
+    statuses != ["status: completed"]
+    or "## Verification Completed\n" not in plan
+    or any(item not in verification for item in required)
+    or re.search(r"\b(?:pending|todo|tbd|not run)\b", verification, re.IGNORECASE)
+):
+    raise SystemExit(
+        "Environment template schema plan must remain completed with actual verification recorded."
+    )
+PY
 
 if ! grep -Fq "status: completed" "$CI_PLAN" ||
   ! grep -Fq "make check" "$CI_PLAN"; then
   printf '%s\n' "Hosted boundary checks plan must be completed and record verification." >&2
+  exit 1
+fi
+
+if ! grep -Fq "exactly two plain placeholder assignments" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "exact two-key schema" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "exact non-executable two-key schema" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "Enforced an exact non-executable two-key schema" "$ROOT_DIR/CHANGES.md"; then
+  printf '%s\n' "Project guidance must document the exact environment template schema." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$PRIVATE_KEY_PLAN" ||
+  ! grep -Fq "ignore rule mutation failed" "$PRIVATE_KEY_PLAN" ||
+  ! grep -Fq "tracked extension mutation failed" "$PRIVATE_KEY_PLAN" ||
+  ! grep -Fq "private-key marker mutation failed" "$PRIVATE_KEY_PLAN" ||
+  ! grep -Fq "hosted pull-request check" "$PRIVATE_KEY_PLAN"; then
+  printf '%s\n' "Private key artifact plan must record completed verification." >&2
+  exit 1
+fi
+
+if ! grep -Fq "status: completed" "$CASE_INSENSITIVE_SIGNING_PLAN" ||
+  ! grep -Fq "five hostile mutations were rejected" "$CASE_INSENSITIVE_SIGNING_PLAN" ||
+  ! grep -Fq "all four Make gates passed" "$CASE_INSENSITIVE_SIGNING_PLAN" ||
+  ! grep -Fq "No signing artifact" "$CASE_INSENSITIVE_SIGNING_PLAN"; then
+  printf '%s\n' "Case-insensitive signing artifact plan must record completed verification." >&2
+  exit 1
+fi
+
+if ! grep -Fq "standard lowercase ignore patterns and are rejected if tracked" "$ROOT_DIR/README.md" ||
+  ! grep -Fq "must not be committed, regardless" "$ROOT_DIR/SECURITY.md" ||
+  ! grep -Fq "regardless of filename-extension case" "$ROOT_DIR/VISION.md" ||
+  ! grep -Fq "case-insensitive" "$ROOT_DIR/CHANGES.md" ||
+  ! grep -Fq "regardless of filename-extension case" "$ROOT_DIR/AGENTS.md"; then
+  printf '%s\n' "Project guidance must preserve case-insensitive signing artifact rejection." >&2
+  exit 1
+fi
+
+if ! grep -Fq "compared case-insensitively for macOS filesystem portability" "$ROOT_DIR/README.md" || \
+  ! grep -Fq "rejected case-insensitively while the repository remains documentation-only" "$ROOT_DIR/SECURITY.md" || \
+  ! grep -Fq "case-insensitive tracked-path checks" "$ROOT_DIR/VISION.md" || \
+  ! grep -Fq "artifact boundary case-insensitive" "$ROOT_DIR/CHANGES.md" || \
+  ! grep -Fq "boundary case-insensitive for macOS filesystem portability" "$ROOT_DIR/AGENTS.md"; then
+  printf '%s\n' "Project guidance must preserve case-insensitive implementation artifact rejection." >&2
   exit 1
 fi
 

@@ -7,6 +7,10 @@
 *.cer
 *.mobileprovision
 *.p12
+*.p8
+*.pfx
+*.pem
+*.key
 *.xcarchive
 *.xcresult
 *.ipa
@@ -25,3 +29,6 @@ camera-captures/
 CameraCaptures/
 camera-recordings/
 CameraRecordings/
+.python-version
+__pycache__/
+*.py[cod]
