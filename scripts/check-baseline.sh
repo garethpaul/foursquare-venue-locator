@@ -63,9 +63,9 @@ require_file "docs/plans/2026-06-13-case-insensitive-signing-artifacts.md"
 require_file "docs/plans/2026-06-13-location-independent-make.md"
 require_file "docs/plans/2026-06-18-case-insensitive-implementation-artifacts.md"
 
-if ! grep -Fq 'ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))' "$ROOT_DIR/Makefile" ||
+if ! grep -Fq 'override ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))' "$ROOT_DIR/Makefile" ||
   ! grep -Fq '"$(ROOT)/scripts/check-baseline.sh"' "$ROOT_DIR/Makefile"; then
-  printf '%s\n' "Makefile verification must resolve the checker from the loaded Makefile." >&2
+  printf '%s\n' "Makefile verification must protect the loaded Makefile root from overrides." >&2
   exit 1
 fi
 
