@@ -14,7 +14,9 @@ This README is based on the checked-in source, manifests, scripts, and repositor
 - `SECURITY.md` - security reporting and disclosure guidance
 - `VISION.md` - project direction and maintenance guardrails
 - `docs/plans/2026-06-08-foursquare-venue-locator-baseline.md` - current baseline plan and verification record
-- `scripts/check-baseline.sh` - static validation for the checked-in documentation baseline
+- `scripts/check-baseline.sh` - documentation and verification-evidence checks
+- `scripts/check_repository_policy.py` - NUL-safe tracked-file and workflow policy
+- `tests/test_repository_policy.py` - isolated hostile repository fixtures
 
 Additional scan context:
 
@@ -22,7 +24,7 @@ Additional scan context:
 - Dependency and build manifests: `.env.example` only; no app dependency
   manifest detected
 - Entry points or build surfaces: `make check`
-- Test-looking files: `scripts/check-baseline.sh`
+- Test-looking files: `tests/test_repository_policy.py` and the baseline scripts
 
 ## Getting Started
 
@@ -67,6 +69,9 @@ make check
   has a consistent local gate before app code exists.
 - GitHub Actions runs the same boundary checks for pushes and pull requests
   with read-only permissions and no persisted checkout credentials.
+- The executable policy rejects tracked symlinks, unexpected executable modes,
+  case-variant sensitive artifacts, implementation files, secret-bearing
+  configuration containers, oversized blobs, and privileged workflow variants.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 
@@ -98,6 +103,10 @@ When the required SDK or runtime is unavailable, use static checks and source re
 - Future `camera-captures` and `camera-recordings` directories are local-only
   outputs. Intentionally sanitized media fixtures require an explicit baseline
   update and metadata review before they are tracked.
+- The repository contains no Foursquare request code, location callbacks, or UI
+  ownership code. URL encoding, response bounds, location freshness/accuracy,
+  stale callbacks, redaction, and device behavior remain requirements for the
+  first implementation rather than tested runtime claims.
 
 ## Security and Privacy Notes
 

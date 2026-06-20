@@ -39,6 +39,8 @@ for path in \
   "README.md" \
   "SECURITY.md" \
   "VISION.md" \
+  "scripts/check_repository_policy.py" \
+  "tests/test_repository_policy.py" \
   "docs/readme-overview.svg" \
   "docs/plans/2026-06-09-foursquare-venue-implementation-boundary.md" \
   "docs/plans/2026-06-09-foursquare-venue-envrc-guard.md" \

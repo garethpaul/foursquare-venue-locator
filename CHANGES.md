@@ -1,5 +1,16 @@
 # Changes
 
+## 2026-06-19
+
+- Added a NUL-safe tracked-file policy that rejects symlinks, unexpected modes,
+  case/path variants, implementation surfaces, secret-bearing config
+  containers, and oversized blobs.
+- Added isolated hostile repository tests and made every Make gate execute
+  them before the documentation-evidence checks.
+- Hardened the workflow boundary against write permissions, secret/token
+  expressions, `pull_request_target`, unpinned checkout, and credential
+  persistence variants.
+
 ## 2026-06-18
 
 - Made the docs-only Swift, Xcode, CocoaPods, and SwiftPM implementation

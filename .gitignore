@@ -29,3 +29,6 @@ camera-captures/
 CameraCaptures/
 camera-recordings/
 CameraRecordings/
+.python-version
+__pycache__/
+*.py[cod]

@@ -53,6 +53,12 @@ Helpful reports include:
   location or camera data is persisted or transmitted.
 - Tracked Swift, Xcode, CocoaPods, and SwiftPM implementation artifacts are
   rejected case-insensitively while the repository remains documentation-only.
+- The executable policy reads NUL-delimited Git index records, rejects symlinks
+  and unexpected modes, scans binary blobs for private-key markers, and blocks
+  case-variant sensitive paths and credential-bearing configuration files.
+- There is no mobile implementation. Foursquare credential redaction, URL
+  encoding, response bounds, CoreLocation quality policy, callback ownership,
+  and UI state must be reviewed when app code is introduced.
 
 
 ## Dependency and Supply Chain Security
@@ -60,6 +66,8 @@ Helpful reports include:
 GitHub Actions runs the docs-only credential, signing, location-trace, and
 scaffolding guards with read-only repository permissions and no persisted
 checkout credentials before changes land.
+The single workflow also rejects write permissions, secret/token expressions,
+`pull_request_target`, additional checkout actions, and unpinned checkout refs.
 
 Dependency updates should come from trusted package managers and should keep lockfiles in sync when lockfiles exist. Do not commit credentials, private keys, tokens, generated secrets, or machine-local configuration. If a vulnerability depends on a compromised package, typosquatting risk, insecure transitive dependency, or unsafe build step, include the package name, affected version, and the path through which it is used.
 
