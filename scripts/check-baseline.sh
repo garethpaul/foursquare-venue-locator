@@ -131,7 +131,7 @@ if git -C "$ROOT_DIR" ls-files | grep -Eq '(^|/)(camera-captures|CameraCaptures|
   exit 1
 fi
 
-if git -C "$ROOT_DIR" grep -nE 'pk\.eyJ|client_secret=|client_id=|fsq3[A-Za-z0-9_-]+' -- . ':!scripts/check-baseline.sh'; then
+if git -C "$ROOT_DIR" grep -nE 'pk\.eyJ|client_(secret|id)=|fsq3[A-Za-z0-9_-]+' -- . ':!scripts/check-baseline.sh'; then
   printf '%s\n' "Tracked files must not contain raw Foursquare, Mapbox, or query-string credentials." >&2
   exit 1
 fi

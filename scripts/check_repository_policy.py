@@ -175,12 +175,6 @@ def reject_workflow_policy(root: Path, entries: list[TrackedEntry]) -> None:
 
 
 def reject_sensitive_content(path: str, content: bytes) -> None:
-    if normalized_path(path) in {
-        "scripts/check-baseline.sh",
-        "scripts/check_repository_policy.py",
-        "tests/test_repository_policy.py",
-    }:
-        return
     if re.search(rb"-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-----", content, re.IGNORECASE):
         raise PolicyError(f"tracked file contains private key material: {path!r}")
     if normalized_path(path) != ".env.example" and re.search(
