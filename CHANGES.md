@@ -1,5 +1,50 @@
 # Changes
 
+## 2026-06-27T00:31:00Z - P1 - Scan enforcement files for secrets
+
+### Summary
+Removed a content-scanning trust gap that allowed credential or private-key
+material to be tracked inside the policy checker, shell baseline, or hostile
+test module.
+
+### Work completed
+- Removed the blanket policy-file exemption from tracked-content inspection.
+- Made legitimate credential-marker fixtures and shell patterns self-safe
+  without weakening the values written into hostile repositories.
+- Added three regressions covering each formerly exempt enforcement path.
+
+### Threads
+- None; no open pull requests or issues existed, and stale policy branches were
+  inspected before implementation.
+
+### Files changed
+- `scripts/check_repository_policy.py` — scan every tracked regular file.
+- `scripts/check-baseline.sh` — retain the raw credential check without a
+  self-matching literal.
+- `tests/test_repository_policy.py` — exercise all three former bypass paths.
+- `README.md` — document the no-exemption content boundary.
+- `docs/plans/2026-06-27-policy-file-secret-scanning.md` — record design and
+  verification.
+
+### Validation
+- Focused regression before implementation — failed all three formerly exempt
+  paths because no `PolicyError` was raised.
+- Focused regression after implementation — passed.
+- `make check` — passed 11 unittest methods, repository policy, and baseline.
+- `git diff --check` — passed.
+
+### Bugs / findings
+- The policy's strongest enforcement files were trusted wholesale, so a real
+  provider token or private-key block placed there bypassed content scanning.
+- Existing stale branches contained earlier policy hardening but not this fix.
+
+### Blockers
+- None.
+
+### Next action
+- Require the exact pull-request head to pass hosted Check and CodeQL before
+  merge, then verify the resulting `master` workflows.
+
 ## 2026-06-19
 
 - Added a NUL-safe tracked-file policy that rejects symlinks, unexpected modes,

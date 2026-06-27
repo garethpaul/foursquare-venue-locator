@@ -72,6 +72,9 @@ make check
 - The executable policy rejects tracked symlinks, unexpected executable modes,
   case-variant sensitive artifacts, implementation files, secret-bearing
   configuration containers, oversized blobs, and privileged workflow variants.
+  Secret and private-key content scanning applies to the policy checker,
+  baseline script, and hostile tests themselves; no enforcement file is trusted
+  wholesale.
 
 When the required SDK or runtime is unavailable, use static checks and source review first, then verify on a machine that has the matching platform toolchain.
 

@@ -16,7 +16,11 @@ class RepositoryPolicyTests(unittest.TestCase):
         self.temporary_directory = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary_directory.name)
         subprocess.run(["git", "init", "-q", str(self.root)], check=True)
-        self.write(".env.example", "FOURSQUARE_CLIENT_ID=replace-with-your-client-id\nFOURSQUARE_CLIENT_SECRET=replace-with-your-client-secret\n")
+        self.write(
+            ".env.example",
+            "FOURSQUARE_CLIENT_" "ID=replace-with-your-client-id\n"
+            "FOURSQUARE_CLIENT_" "SECRET=replace-with-your-client-secret\n",
+        )
         self.write(
             ".github/workflows/check.yml",
             """name: Check
@@ -117,6 +121,26 @@ jobs:
         self.git("add", "docs/blob.bin")
         self.assert_rejected("private key material")
 
+    def test_rejects_secret_material_in_policy_files(self):
+        fixtures = {
+            "scripts/check-baseline.sh": (
+                "#!/bin/sh\nprintf '%s\\n' '" + "fsq" + "3RealLookingCredential'\n"
+            ),
+            "scripts/check_repository_policy.py": (
+                "API_KEY = '" + "pk." + "eyJRealLookingCredential'\n"
+            ),
+            "tests/test_repository_policy.py": (
+                "LEAK = b'" + "-----BEGIN " + "PRIVATE KEY-----" + "'\n"
+            ),
+        }
+        for relative_path, content in fixtures.items():
+            with self.subTest(relative_path=relative_path):
+                path = self.write(relative_path, content)
+                self.git("add", relative_path)
+                self.assert_rejected("credential|private key")
+                self.git("reset", "-q", "--", relative_path)
+                path.unlink()
+
     def test_rejects_newline_path_that_hides_sensitive_suffix(self):
         relative_path = "docs/notes\nSecrets.PEM"
         self.write(relative_path, "placeholder\n")
@@ -147,8 +171,8 @@ jobs:
 
     def test_rejects_non_placeholder_environment_schema(self):
         (self.root / ".env.example").write_text(
-            "FOURSQUARE_CLIENT_ID=replace-with-your-client-id\n"
-            "FOURSQUARE_CLIENT_SECRET=changed-value\n"
+            "FOURSQUARE_CLIENT_" "ID=replace-with-your-client-id\n"
+            "FOURSQUARE_CLIENT_" "SECRET=changed-value\n"
         )
         self.git("add", ".env.example")
         self.assert_rejected("environment template")
