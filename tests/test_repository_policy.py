@@ -177,6 +177,19 @@ jobs:
         self.git("add", ".env.example")
         self.assert_rejected("environment template")
 
+    # Asserted from both sides with the boundary hardcoded, so widening the constant
+    # breaks the reject case and narrowing it breaks the accept case. Importing
+    # MAX_TRACKED_FILE_BYTES here would only prove that it equals itself.
+    def test_accepts_tracked_file_exactly_at_the_documentation_only_size_bound(self):
+        self.write("docs/reference.bin", b"x" * 1_048_576)
+        self.git("add", "docs/reference.bin")
+        inspect_repository(self.root)
+
+    def test_rejects_tracked_file_one_byte_over_the_documentation_only_size_bound(self):
+        self.write("docs/reference.bin", b"x" * (1_048_576 + 1))
+        self.git("add", "docs/reference.bin")
+        self.assert_rejected("exceeds the documentation-only size bound")
+
 
 if __name__ == "__main__":
     unittest.main()
